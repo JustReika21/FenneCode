@@ -173,6 +173,3 @@ cython_debug/
 .idea/
 *.pyc
 .DS_Store
-
-Dockerfile
-docker-compose.yml
