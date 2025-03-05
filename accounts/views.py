@@ -1,5 +1,4 @@
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import redirect
 from django.views.generic import FormView
 from accounts.forms import RegistrationForm
 
@@ -19,4 +18,5 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    pass
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)

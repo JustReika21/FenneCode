@@ -1,0 +1,33 @@
+{% load static %}
+<header>
+
+    <a href="{% url "core:home" %}" class="logo"><img src="{% static "img/logo.png" %}" alt="Logo"></a>
+
+    <nav>
+        <ul>
+            <li><a href="#">Профиль</a></li>
+            <li><a href="#">Курсы &bigtriangledown;</a>
+                <ul>
+                    <li><a href="#">Все курсы</a></li>
+                    <li><a href="#">Python</a></li>
+                    <li><a href="#">SQL</a></li>
+                </ul>
+            </li>
+            {% if request.user.is_authenticated %}
+                <li>
+                    <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-button">
+                            Выход
+                        </button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'accounts:login' %}">Вход</a></li>
+                <li><a href="{% url 'accounts:signin' %}">Регистрация</a></li>
+            {% endif %}
+            <li><a href="#">О нас</a></li>
+        </ul>
+    </nav>
+
+</header>
