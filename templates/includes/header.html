@@ -5,7 +5,6 @@
 
     <nav>
         <ul>
-            <li><a href="#">Профиль</a></li>
             <li><a href="#">Курсы &bigtriangledown;</a>
                 <ul>
                     <li><a href="#">Все курсы</a></li>
@@ -14,6 +13,7 @@
                 </ul>
             </li>
             {% if request.user.is_authenticated %}
+                <li><a href="{% url 'user_profile:profile' %}">Профиль</a></li>
                 <li>
                     <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
                         {% csrf_token %}

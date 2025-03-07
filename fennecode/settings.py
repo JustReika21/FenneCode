@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'lessons.apps.LessonsConfig',
     'reviews.apps.ReviewsConfig',
     'tasks.apps.TasksConfig',
+    'user_profile.apps.UserProfileConfig'
 ]
 
 MIDDLEWARE = [
