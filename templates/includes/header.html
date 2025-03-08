@@ -1,25 +1,27 @@
 {% load static %}
 <header>
-
-    <a href="{% url "core:home" %}" class="logo"><img src="{% static "img/logo.png" %}" alt="Logo"></a>
-
+    <a href="{% url 'core:home' %}" class="logo">
+        <img src="{% static 'img/logo.png' %}" alt="Logo">
+    </a>
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="menu-toggle">&#9776;</label>
     <nav>
         <ul>
-            <li><a href="#">Курсы &bigtriangledown;</a>
+            <li>
+                <span>Курсы &bigtriangledown;</span>
                 <ul>
-                    <li><a href="#">Все курсы</a></li>
+                    <li><a href="{% url 'courses:courses' %}">Все курсы</a></li>
                     <li><a href="#">Python</a></li>
                     <li><a href="#">SQL</a></li>
                 </ul>
             </li>
+
             {% if request.user.is_authenticated %}
                 <li><a href="{% url 'user_profile:profile' %}">Профиль</a></li>
                 <li>
                     <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit" class="nav-button">
-                            Выход
-                        </button>
+                        <button type="submit" class="nav-button">Выход</button>
                     </form>
                 </li>
             {% else %}
@@ -29,5 +31,4 @@
             <li><a href="#">О нас</a></li>
         </ul>
     </nav>
-
 </header>

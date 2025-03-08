@@ -11,7 +11,8 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    flex-wrap: wrap;
 }
 
 header .logo img {
@@ -21,31 +22,47 @@ header .logo img {
     padding: 5px;
 }
 
-header nav ul li {
-    list-style: none;
-    position: relative;
-    float: left;
+#menu-toggle {
+    display: none;
 }
 
-header nav ul li a {
+.menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 16px;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
     padding: 16px;
     text-decoration: none;
     color: black;
     display: block;
 }
 
-header nav ul li a:hover {
-    background-color: black;
-    color: white;
+nav ul li span {
+    padding: 16px;
+    text-decoration: none;
+    color: black;
+    display: block;
 }
 
-header nav ul li form:hover {
+nav ul li a:hover,
+nav ul li span:hover,
+.nav-button:hover {
     background-color: black;
     color: white;
-}
-
-nav ul li:hover > ul {
-    display: initial;
 }
 
 nav ul li ul {
@@ -55,15 +72,11 @@ nav ul li ul {
     width: 180px;
     background-color: white;
     display: none;
+    flex-direction: column;
 }
 
-nav ul li ul li {
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-nav ul li ul li a {
-    color: black;
+nav ul li:hover > ul {
+    display: block;
 }
 
 .nav-button {
@@ -75,8 +88,43 @@ nav ul li ul li a {
     display: block;
 }
 
-.nav-button:hover {
-    background-color: black;
-    color: white;
-}
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
 
+    nav {
+        width: 100%;
+    }
+
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+    }
+
+    #menu-toggle:checked + .menu-toggle + nav ul {
+        display: flex;
+    }
+
+    nav ul li {
+        width: 100%;
+    }
+
+    nav ul li a,
+    .nav-button {
+        padding: 12px 16px;
+        border-bottom: 1px solid #ccc;
+        text-align: left;
+    }
+
+    nav ul li span {
+        display: none;
+    }
+
+    nav ul li ul {
+        position: relative;
+        width: 100%;
+    }
+
+}

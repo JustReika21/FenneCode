@@ -5,6 +5,8 @@ from django.db import models
 class Course(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
+    slug = models.SlugField(unique=True)
+    cover = models.ImageField(upload_to="courses_covers/", default='courses_covers/default.jpg')
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='authors')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
