@@ -18,6 +18,7 @@
     font-style: italic;
     color: #bbb;
     margin-bottom: 15px;
+    white-space: pre-line;
 }
 
 .course-meta {
@@ -50,8 +51,21 @@
     margin-top: 30px;
 }
 
+.lessons a{
+    text-decoration: none;
+    color: inherit;
+}
+
 .lesson {
     background: #333;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: 0.3s;
+}
+
+.completed_lesson {
+    background: #00990099;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 5px;

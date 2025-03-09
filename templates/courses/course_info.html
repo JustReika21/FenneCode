@@ -2,25 +2,55 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/courses_info.css' %}">
-<div class="course-container">
-    <h1 class="course-title">{{ course.title }}</h1>
-    <p class="course-description">{{ course.description }}</p>
-    <div class="course-meta">
-        <p>
+    <div class="course-container">
+        <h1 class="course-title">{{ course.title }}</h1>
+        <p class="course-meta">
             Автор: <strong>{{ course.author }}</strong> | Создан: {{ course.created_at }} | Обновлён: {{ course.updated_at }}
         </p>
+        <h2>Описание</h2>
+        <p class="course-description">{{ course.description }}</p>
+        <h2>Требуемые навыки</h2>
+        <p class="course-description">{{ course.skill_requirements }}</p>
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="enroll-button">Записаться</button>
-        </form>
-    </div>
+        {% if request.user.is_authenticated and is_user_enrolled %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="user" value="{{ request.user.id }}">
+                <input type="hidden" name="course" value="{{ course.id }}">
+                <button type="submit" class="enroll-button">Отписаться</button>
+            </form>
+        {% elif request.user.is_authenticated %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="user" value="{{ request.user.id }}">
+                <input type="hidden" name="course" value="{{ course.id }}">
+                <button type="submit" class="enroll-button">Записаться на курс</button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="enroll-button" style="text-decoration: none">
+                Записаться на курс
+            </a>
+        {% endif %}
 
-    <div class="lessons">
-        <h2>Список уроков</h2>
-        {% for lesson in lessons %}
-            <p class="lesson">{{ lesson.title }}</p>
+
+
+        <div class="lessons">
+            <h2>Список уроков</h2>
+            {% for lesson in lessons %}
+                {% if lesson.id in completed_lessons %}
+                    <a href="{{ lesson.id }}"><p class="completed_lesson">{{ lesson.title }}</p></a>
+                {% else %}
+                    <a href="{{ lesson.id }}"><p class="lesson">{{ lesson.title }}</p></a>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+        <h2>Отзывы</h2>
+        {% for review in reviews %}
+            {{ review.user.username }}
+            {{ review.created_at }}
+            {{ review.text }}
+            {{ review.rating }}
         {% endfor %}
     </div>
-</div>
 {% endblock %}
