@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/courses_info.css' %}">
+<div class="course-container">
+    <h1 class="course-title">{{ course.title }}</h1>
+    <p class="course-description">{{ course.description }}</p>
+    <div class="course-meta">
+        <p>
+            Автор: <strong>{{ course.author }}</strong> | Создан: {{ course.created_at }} | Обновлён: {{ course.updated_at }}
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="enroll-button">Записаться</button>
+        </form>
+    </div>
+
+    <div class="lessons">
+        <h2>Список уроков</h2>
+        {% for lesson in lessons %}
+            <p class="lesson">{{ lesson.title }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
