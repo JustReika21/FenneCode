@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/lesson_details.css' %}">
+    <title>{{ lesson.title }}</title>
+    <div class="lesson-container">
+        <h1 class="lesson-title">{{ lesson.title }}</h1>
+
+        <div class="lesson-content">
+            {{ lesson.content }}
+        </div>
+
+        <p class="lesson-meta">Урок: {{ lesson.position }}</p>
+
+        <h2>Задания</h2>
+        
+            {% for choice_task in choice_tasks %}
+                <form method="post">
+                {% csrf_token %}
+                <div class="lesson-task">
+                    <p>{{ choice_task.question }}</p>
+                    {% for choice in choice_task.choices.keys %}
+                        <label>
+                            <input type="checkbox" name="task_{{ choice_task.id }}" value="{{ choice }}">
+                            {{ choice }}
+                        </label>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="send-button">Отправить</button>
+            {% endfor %}
+            
+        </form>
+
+
+
+        <div class="lesson-nav">
+            <a href="prev lesson" class="lesson-nav-button prev">← Предыдущий урок</a>
+            <a href="next lesson" class="lesson-nav-button next">Следующий урок →</a>
+        </div>
+    </div>
+{% endblock %}

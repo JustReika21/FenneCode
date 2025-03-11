@@ -75,3 +75,7 @@
 .lesson:hover {
     background: #444;
 }
+
+.completed_lesson:hover {
+    background: #00aa00aa;
+}

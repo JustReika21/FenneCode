@@ -32,16 +32,16 @@
             </a>
         {% endif %}
 
-
-
         <div class="lessons">
             <h2>Список уроков</h2>
             {% for lesson in lessons %}
+                <a href="{% url 'courses:lessons:lesson_details' course_slug=course.slug lesson_id=lesson.id %}">
                 {% if lesson.id in completed_lessons %}
-                    <a href="{{ lesson.id }}"><p class="completed_lesson">{{ lesson.title }}</p></a>
+                    <p class="completed_lesson">{{ lesson.title }}</p>
                 {% else %}
-                    <a href="{{ lesson.id }}"><p class="lesson">{{ lesson.title }}</p></a>
+                    <p class="lesson">{{ lesson.title }}</p>
                 {% endif %}
+                </a>
 
             {% endfor %}
         </div>

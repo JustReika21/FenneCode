@@ -1,0 +1,105 @@
+.lesson-container {
+    max-width: 75%;
+    margin: 10px auto;
+    padding: 20px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    color: #f5f5f5;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.lesson-title {
+    color: #f39c12;
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.lesson-content {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.lesson-meta {
+    font-size: 14px;
+    color: #bbb;
+    margin-bottom: 20px;
+}
+
+.lesson-task {
+    background: #444;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.lesson-nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.lesson-nav-button {
+    background: #333;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.lesson-nav-button:hover {
+    background: #444;
+}
+
+
+.lesson-task {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.lesson-task label {
+    display: block;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+.lesson-task input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ff9800;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 8px;
+    transition: 0.3s;
+}
+
+.lesson-task input[type="checkbox"]:checked {
+    background: #f39c12;
+    border-color: #f39c12;
+}
+
+.send-button {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #f39c12;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.send-button:hover {
+    background: #f39c12;
+}
+
