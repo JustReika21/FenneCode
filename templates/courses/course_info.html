@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/courses_info.css' %}">
+    <title>{{ course.title }}</title>
     <div class="course-container">
         <h1 class="course-title">{{ course.title }}</h1>
         <p class="course-meta">
@@ -12,15 +13,10 @@
         <h2>Требуемые навыки</h2>
         <p class="course-description">{{ course.skill_requirements }}</p>
 
-        {% if request.user.is_authenticated and is_user_enrolled %}
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="user" value="{{ request.user.id }}">
-                <input type="hidden" name="course" value="{{ course.id }}">
-                <button type="submit" class="enroll-button">Отписаться</button>
-            </form>
-        {% elif request.user.is_authenticated %}
-            <form method="post">
+        {% if is_user_enrolled %}
+            <p class="course-description">Вы подписаны</p>
+        {% elif not is_user_enrolled %}
+            <form method="post" action="{% url 'api:enroll_course' %}">
                 {% csrf_token %}
                 <input type="hidden" name="user" value="{{ request.user.id }}">
                 <input type="hidden" name="course" value="{{ course.id }}">
@@ -53,4 +49,5 @@
             {{ review.rating }}
         {% endfor %}
     </div>
+    <script src="{% static 'js/courses/courses_info.js' %}"></script>
 {% endblock %}

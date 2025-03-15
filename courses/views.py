@@ -26,20 +26,9 @@ def course_info(request, course_slug):
     reviews = course.reviews.all()
     user = request.user
     completed_lessons = get_completed_lessnons(user)
-    is_user_enrolled = Enrollment.objects.filter(user=user).exists()
-
-    if request.method == "POST":
-        form = EnrollmentForm(request.POST)
-        if form.is_valid():
-            if not is_user_enrolled:
-                Enrollment.objects.create(user=user, course=course)
-                messages.success(request, 'Вы успешно записались на курс')
-            else:
-                Enrollment.objects.filter(user=user, course=course).delete()
-                messages.success(request, 'Вы успешно отписались')
-            return redirect(request.path)
-    else:
-        form = EnrollmentForm()
+    is_user_enrolled = False
+    if user.is_authenticated:
+        is_user_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
 
     context = {
         'course': course,
@@ -47,6 +36,5 @@ def course_info(request, course_slug):
         'reviews': reviews,
         'completed_lessons': completed_lessons,
         'is_user_enrolled': is_user_enrolled,
-        'form': form
     }
     return render(request, 'courses/course_info.html', context)
