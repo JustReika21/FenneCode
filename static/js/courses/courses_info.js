@@ -29,8 +29,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     let message = document.createElement("p");
                     message.classList.add("course-description");
                     message.textContent = "Вы подписаны";
-
                     form.replaceWith(message);
+
+                    let lockedLesson = document.querySelector(".lesson.locked");
+                    let lessonLink = document.querySelector(".lesson-link.hidden");
+
+                    if (lockedLesson && lessonLink) {
+                        lockedLesson.remove();
+                        lessonLink.classList.remove("hidden");
+                    }
                 } else {
                     alert("Ошибка: " + data.message);
                 }

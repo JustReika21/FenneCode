@@ -12,7 +12,9 @@ class Lesson(models.Model):
     user_lesson_complete = models.ManyToManyField(get_user_model(), related_name='user_lesson_complete')
 
     class Meta:
-        models.UniqueConstraint(fields=['course', 'position'], name='unique_lesson_position')
+        constraints = [
+            models.UniqueConstraint(fields=['course', 'position'], name='unique_lesson_position')
+        ]
 
     def __str__(self):
         return self.title

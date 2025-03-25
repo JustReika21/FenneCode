@@ -8,7 +8,7 @@ from courses.models import Course, Enrollment
 def get_completed_lessnons(user):
     completed_lessons = set()
     if user.is_authenticated:
-        completed_lessons = set(user.user_lesson_complete.values_list('id', flat=True))
+        completed_lessons = set(user.user_lesson_complete.values_list('position', flat=True))
     return completed_lessons
 
 

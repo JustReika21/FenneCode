@@ -27,11 +27,7 @@
     margin-bottom: 20px;
 }
 
-.enroll-form {
-    text-align: center;
-    margin: 20px 0;
-}
-
+.redirect-button,
 .enroll-button {
     background: #ff5555;
     color: white;
@@ -43,6 +39,7 @@
     transition: 0.3s;
 }
 
+.redirect-button:hover,
 .enroll-button:hover {
     background: #cc0000;
 }
@@ -78,4 +75,8 @@
 
 .completed_lesson:hover {
     background: #00aa00aa;
+}
+
+.hidden {
+    display: none;
 }

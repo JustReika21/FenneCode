@@ -6,7 +6,7 @@
     <div class="course-container">
         <h1 class="course-title">{{ course.title }}</h1>
         <p class="course-meta">
-            Автор: <strong>{{ course.author }}</strong> | Создан: {{ course.created_at }} | Обновлён: {{ course.updated_at }}
+            Автор: <strong>{{ course.author }}</strong> | Обновлён: {{ course.updated_at }}
         </p>
         <h2>Описание</h2>
         <p class="course-description">{{ course.description }}</p>
@@ -15,7 +15,7 @@
 
         {% if is_user_enrolled %}
             <p class="course-description">Вы подписаны</p>
-        {% elif not is_user_enrolled %}
+        {% elif not is_user_enrolled and request.user.is_authenticated %}
             <form method="post" action="{% url 'api:enroll_course' %}">
                 {% csrf_token %}
                 <input type="hidden" name="user" value="{{ request.user.id }}">
@@ -23,24 +23,50 @@
                 <button type="submit" class="enroll-button">Записаться на курс</button>
             </form>
         {% else %}
-            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="enroll-button" style="text-decoration: none">
-                Записаться на курс
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" style="text-decoration: none">
+                <button class="redirect-button">Записаться на курс</button>
             </a>
         {% endif %}
 
-        <div class="lessons">
-            <h2>Список уроков</h2>
-            {% for lesson in lessons %}
-                <a href="{% url 'courses:lessons:lesson_details' course_slug=course.slug lesson_id=lesson.id %}">
-                {% if lesson.id in completed_lessons %}
-                    <p class="completed_lesson">{{ lesson.title }}</p>
-                {% else %}
-                    <p class="lesson">{{ lesson.title }}</p>
-                {% endif %}
-                </a>
+        {% if is_user_enrolled %}
+            <div class="lessons">
+                <h2>Список уроков</h2>
+                {% for lesson in lessons %}
+                    {% with prev_position=lesson.position|add:"-1" %}
+                        {% if lesson.position == 1 or prev_position in completed_lessons %}
+                            <a href="{% url 'courses:lessons:lesson_details' course_slug=course.slug lesson_position=lesson.position %}">
+                            {% if lesson.position in completed_lessons %}
+                                <p class="completed_lesson">{{ lesson.title }}</p>
+                            {% else %}
+                                <p class="lesson">{{ lesson.title }}</p>
+                            {% endif %}
+                            {% if lesson.position == 1 or prev_position in completed_lessons %}
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <p class="lesson">🔒 {{ lesson.title }}</p>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="lessons">
+                <h2>Список уроков</h2>
+                {% for lesson in lessons %}
+                    {% if forloop.first %}
+                        <a href="{% url 'courses:lessons:lesson_details' course_slug=course.slug lesson_position=lesson.position %}"
+                           class="lesson-link hidden"
+                           data-lesson-url="{% url 'courses:lessons:lesson_details' course_slug=course.slug lesson_position=lesson.position %}">
+                            <p class="lesson">{{ lesson.title }}</p>
+                        </a>
+                        <p class="lesson locked">🔒 {{ lesson.title }}</p>
+                    {% else %}
+                            <p class="lesson">🔒 {{ lesson.title }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
-            {% endfor %}
-        </div>
         <h2>Отзывы</h2>
         {% for review in reviews %}
             {{ review.user.username }}
