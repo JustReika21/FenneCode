@@ -3,9 +3,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from django.conf import settings
-from core.views import custom_handler403
+from core.views import custom_handler403, custom_handler404, custom_handler500
 
 handler403 = custom_handler403
+handler404 = custom_handler404
+handler500 = custom_handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
