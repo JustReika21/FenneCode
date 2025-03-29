@@ -1,19 +1,13 @@
 from django.contrib import admin
-from django.utils.regex_helper import Choice
 
-from tasks.models import CodeTask, ChoiceTask, Submission
-
-
-@admin.register(CodeTask)
-class CodeTaskAdmin(admin.ModelAdmin):
-    list_display = ('question', 'lesson')
+from tasks.models import ChoiceTask, Answer
 
 
 @admin.register(ChoiceTask)
 class ChoiceTaskAdmin(admin.ModelAdmin):
-    list_display = ('question', 'lesson')
+    list_display = ('lesson', 'question', 'question_type')
 
 
-@admin.register(Submission)
-class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'lesson', 'completed')
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('choice_task', 'answer', 'is_correct')

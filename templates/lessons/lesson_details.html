@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/lesson_details.css' %}">
     <title>{{ lesson.title }}</title>
@@ -13,22 +14,22 @@
         <p class="lesson-meta">Урок: {{ lesson.position }}</p>
 
         <h2>Задания</h2>
-        
-            {% for choice_task in choice_tasks %}
+
+            {% for task in tasks %}
                 <form method="post">
                 {% csrf_token %}
                 <div class="lesson-task">
-                    <p>{{ choice_task.question }}</p>
-                    {% for choice in choice_task.choices.keys %}
+                    <p>{{ task.question }}</p>
+                    {% for choice in choices|get_item:task.id %}
                         <label>
-                            <input type="checkbox" name="task_{{ choice_task.id }}" value="{{ choice }}">
-                            {{ choice }}
+                            <input type="checkbox" name="task" value="1">
+                            {{ choice.answer }}
                         </label>
                     {% endfor %}
                 </div>
                 <button type="submit" class="send-button">Отправить</button>
             {% endfor %}
-            
+
         </form>
 
 

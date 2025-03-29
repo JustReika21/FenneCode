@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 
 from courses.models import Course
 from lessons.models import Lesson
+from tasks.models import ChoiceTask
 
 
 @login_required
@@ -20,13 +21,15 @@ def lesson_details(request, course_slug, lesson_position):
         if not user_completed_prev_lesson:
             raise PermissionDenied
 
-    # TODO: N+1 для тасков
-    code_tasks = lesson.code_tasks.all()
-    choice_tasks = lesson.choice_tasks.all()
+    tasks = ChoiceTask.objects.filter(lesson=lesson).order_by('id')
+    choices = dict()
+
+    for task in tasks:
+        choices[task.id] = task.answers.all()
 
     context = {
         'lesson': lesson,
-        'code_tasks': code_tasks,
-        'choice_tasks': choice_tasks,
+        'tasks': tasks,
+        'choices': choices,
     }
     return render(request, 'lessons/lesson_details.html', context)

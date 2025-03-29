@@ -22,7 +22,7 @@ def courses(request):
 
 def course_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
-    lessons = course.lessons.all()
+    lessons = course.lessons.all().order_by('position')
     reviews = course.reviews.all()
     user = request.user
     completed_lessons = get_completed_lessnons(user)
