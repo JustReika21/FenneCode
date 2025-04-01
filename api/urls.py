@@ -9,4 +9,5 @@ router = DefaultRouter()
 urlpatterns = [
     path('', include(router.urls)),
     path('enroll/', views.enroll_course, name='enroll_course'),
+    path('submit_choice_task_answer/', views.submit_choice_task_answers, name='submit_choice_task_answers'),
 ]

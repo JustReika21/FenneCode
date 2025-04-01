@@ -16,7 +16,7 @@ class ChoiceTask(models.Model):
     ]
 
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    question = models.CharField(max_length=255)
+    question = models.TextField()
     question_type = models.CharField(max_length=20, choices=QUESTION_TYPE_CHOICES)
 
     def __str__(self):
@@ -33,9 +33,10 @@ class Answer(models.Model):
 
 
 class UserChoiceAnswer(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    choice_task = models.ForeignKey(ChoiceTask, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_choice_answers', on_delete=models.CASCADE)
+    choice_task = models.ForeignKey(ChoiceTask, related_name='user_choice_answers', on_delete=models.CASCADE)
     selected_answers = models.ManyToManyField(Answer)
+    is_correct = models.BooleanField()
 
     def __str__(self):
         return f'Пользователь: {self.choice_task} - Задание: {self.choice_task}'

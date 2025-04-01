@@ -11,26 +11,18 @@
 .lesson-title {
     color: #f39c12;
     font-size: 28px;
-    margin-bottom: 15px;
 }
 
 .lesson-content {
-    padding: 15px;
     border-radius: 5px;
     margin-bottom: 20px;
     font-size: 16px;
+    white-space: pre-line;
 }
 
 .lesson-meta {
     font-size: 14px;
     color: #bbb;
-    margin-bottom: 20px;
-}
-
-.lesson-task {
-    background: #444;
-    padding: 15px;
-    border-radius: 5px;
     margin-bottom: 20px;
 }
 
@@ -58,16 +50,22 @@
 .lesson-task {
     background: #1e1e1e;
     color: #fff;
-    padding: 15px;
     margin: 10px 0;
     border-radius: 8px;
     font-size: 18px;
 }
 
-.lesson-task label {
+.lesson-task-answer {
     display: block;
     margin: 8px 0;
+    padding: 8px;
     cursor: pointer;
+    border-radius: 8px;
+    background: #333;
+}
+
+.lesson-task-answer:hover {
+    background: #444;
 }
 
 .lesson-task input[type="checkbox"] {
@@ -94,8 +92,8 @@
     font-size: 16px;
     border: none;
     border-radius: 6px;
-    cursor: pointer;
     margin-top: 10px;
+    cursor: pointer;
     transition: 0.3s;
 }
 
@@ -103,3 +101,25 @@
     background: #f39c12;
 }
 
+.lesson-task-correct {
+    background: #00990099;
+}
+
+.lesson-task-correct:hover {
+    background: #00aa00aa;
+}
+
+.lesson-task-incorrect {
+    background: #990000;
+}
+.lesson-task-incorrect:hover {
+    background: #aa0000;
+}
+
+.lesson-task-incorrect-not-chosen {
+    color: #990000;
+}
+
+.lesson-task-correct-not-chosen {
+    color: #00990099;
+}

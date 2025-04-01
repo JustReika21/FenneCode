@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
     <title>Курсы</title>
-    <link rel="stylesheet" href="{% static 'css/courses.css' %}">
+    <link rel="stylesheet" href="{% static 'css/courses/courses.css' %}">
     <div class="courses-container">
         {% for course in courses %}
             <a href="{{ course.slug }}" class="course-card" style="text-decoration: none">

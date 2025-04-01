@@ -2,7 +2,7 @@
 {% load static %}
 {% load custom_filters %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'css/lesson_details.css' %}">
+    <link rel="stylesheet" href="{% static 'css/lessons/lesson_details.css' %}">
     <title>{{ lesson.title }}</title>
     <div class="lesson-container">
         <h1 class="lesson-title">{{ lesson.title }}</h1>
@@ -14,23 +14,54 @@
         <p class="lesson-meta">Урок: {{ lesson.position }}</p>
 
         <h2>Задания</h2>
-
             {% for task in tasks %}
-                <form method="post">
-                {% csrf_token %}
-                <div class="lesson-task">
+                {% with user_answers=user_answers_dict|get_item:task.id %}
                     <p>{{ task.question }}</p>
-                    {% for choice in choices|get_item:task.id %}
-                        <label>
-                            <input type="checkbox" name="task" value="1">
-                            {{ choice.answer }}
-                        </label>
-                    {% endfor %}
-                </div>
-                <button type="submit" class="send-button">Отправить</button>
+                    <div class="lesson-task">
+                        {% if user_answers %}
+                            {% for choice in choices|get_item:task.id %}
+                                {% if choice.id in user_answers %}
+                                    <label class="lesson-task-answer 
+                                    {% if choice.is_correct %}
+                                        lesson-task-correct
+                                    {% else %}
+                                        lesson-task-incorrect
+                                    {% endif %}">
+                                        <input type="checkbox" checked>
+                                        {{ choice.answer }}
+                                    </label>
+                                {% elif choice.is_correct %}
+                                    <label class="lesson-task-answer lesson-task-correct-not-chosen">
+                                        <input type="checkbox">
+                                        {{ choice.answer }}
+                                    </label>
+                                {% else %}
+                                    <label class="lesson-task-answer lesson-task-incorrect-not-chosen">
+                                        <input type="checkbox">
+                                        {{ choice.answer }}
+                                    </label>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <form method="post" action="{% url 'api:submit_choice_task_answers' %}">
+                                {% for choice in choices|get_item:task.id %}
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user" value="{{ request.user.id }}">
+                                        <input type="hidden" name="choice_task" value="{{ task.id }}">
+                                        <label class="lesson-task-answer">
+                                                <input type="checkbox" name="selected_answers" value="{{ choice.id }}">
+                                                {{ choice.answer }}
+                                        </label>
+                                {% endfor %}
+                                <button type="submit" class="send-button">Отправить</button>
+                            </form>
+                        {% endif %}
+                    {% if not forloop.last %}
+                        <hr>
+                    {% endif %}
+                    </div>
+                {% endwith %}
             {% endfor %}
-
-        </form>
 
 
 
@@ -39,4 +70,5 @@
             <a href="next lesson" class="lesson-nav-button next">Следующий урок →</a>
         </div>
     </div>
+    <script src="{% static 'js/lessons/lessons_details.js' %}"></script>
 {% endblock %}
