@@ -83,8 +83,11 @@ def check_lesson_completion(request, lesson_id):
             lesson = Lesson.objects.get(id=lesson_id)
             count_tasks = lesson.lessons.count()
             count_completed_tasks = UserChoiceAnswer.objects.filter(choice_task__lesson=lesson, user=user_id).count()
+            is_all_tasks_completed = count_completed_tasks == count_tasks
+            if is_all_tasks_completed:
+                lesson.user_lesson_complete.add(user_id)
             return JsonResponse({
-                'is_all_tasks_completed': count_completed_tasks == count_tasks
+                'is_all_tasks_completed': is_all_tasks_completed,
             })
         except ObjectDoesNotExist:
             return JsonResponse({'error': 'Data is incorrect'}, status=400)
