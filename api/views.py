@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from accounts.models import Account
 from courses.models import Course, Enrollment
+from lessons.models import Lesson
 from tasks.models import Answer, ChoiceTask, UserChoiceAnswer
 
 
@@ -73,3 +74,19 @@ def submit_choice_task_answers(request):
             return JsonResponse({'error': 'Data is incorrect'}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+
+
+def check_lesson_completion(request, lesson_id):
+    if request.method == "GET":
+        try:
+            user_id = request.user.id
+            lesson = Lesson.objects.get(id=lesson_id)
+            count_tasks = lesson.lessons.count()
+            count_completed_tasks = UserChoiceAnswer.objects.filter(choice_task__lesson=lesson, user=user_id).count()
+            return JsonResponse({
+                'is_all_tasks_completed': count_completed_tasks == count_tasks
+            })
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'Data is incorrect'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+

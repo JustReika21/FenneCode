@@ -53,7 +53,7 @@
                                                 {{ choice.answer }}
                                         </label>
                                 {% endfor %}
-                                <button type="submit" class="send-button">Отправить</button>
+                                <button class="send-button" data-lesson-id="{{ lesson.id }}">Отправить</button>
                             </form>
                         {% endif %}
                     {% if not forloop.last %}
@@ -63,12 +63,20 @@
                 {% endwith %}
             {% endfor %}
 
-
-
         <div class="lesson-nav">
-            <a href="prev lesson" class="lesson-nav-button prev">← Предыдущий урок</a>
-            <a href="next lesson" class="lesson-nav-button next">Следующий урок →</a>
+            {% if prev_lesson %}
+            	<a href="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=prev_lesson %}" class="lesson-nav-button prev">← Предыдущий урок</a>
+            {% endif %}
+            {% if is_all_tasks_completed and next_lesson %}
+                <a href="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=next_lesson %}" class="lesson-nav-button next">Следующий урок →</a>
+            {% elif next_lesson %}
+                <a class="lesson-nav-button next" 
+                   data-next-lesson-url="{% if next_lesson %}{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=next_lesson %}{% endif %}">
+                   Следующий урок →
+                </a>
+            {% endif %}
         </div>
     </div>
-    <script src="{% static 'js/lessons/lessons_details.js' %}"></script>
+    <script type="module" src="{% static 'js/lessons/task_handle.js' %}"></script>
+    <script type="module" src="{% static 'js/lessons/lesson_completion.js' %}"></script>
 {% endblock %}

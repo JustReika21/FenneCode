@@ -15,7 +15,7 @@ class ChoiceTask(models.Model):
         (MULTIPLE, 'Multiple Choice'),
     ]
 
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, related_name='lessons', on_delete=models.CASCADE)
     question = models.TextField()
     question_type = models.CharField(max_length=20, choices=QUESTION_TYPE_CHOICES)
 
