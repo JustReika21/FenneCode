@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
 
             let lessonId = this.getAttribute("data-lesson-id")
-            let courseSlug = this.getAttribute("data-course-slug")
             let form = this.closest("form");
             let formData = new FormData(form);
             let csrfToken = formData.get("csrfmiddlewaretoken");
@@ -24,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     this.remove();
-                    updateTaskStatus(data);
+                    updateTaskStatus(data, form);
                     checkLessonCompletion(lessonId);
                 } else {
                     throw new Error("Ошибка: " + data.message);
@@ -38,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function updateTaskStatus(data) {
+function updateTaskStatus(data, form) {
     data.correct_chosen.forEach(correctId => {
         document.querySelector(`input[value="${correctId}"]`)
             ?.closest('.lesson-task-answer')
@@ -61,5 +60,8 @@ function updateTaskStatus(data) {
         document.querySelector(`input[value="${incorrectId}"]`)
             ?.closest('.lesson-task-answer')
             ?.classList.add('lesson-task-incorrect-not-chosen');
+    });
+    form.querySelectorAll(".lesson-task-answer input[type='checkbox']").forEach(checkbox => {
+        checkbox.disabled = true;
     });
 }

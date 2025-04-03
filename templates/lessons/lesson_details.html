@@ -1,82 +1,73 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
+
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/lessons/lesson_details.css' %}">
     <title>{{ lesson.title }}</title>
+    
     <div class="lesson-container">
         <h1 class="lesson-title">{{ lesson.title }}</h1>
-
-        <div class="lesson-content">
-            {{ lesson.content }}
-        </div>
-
+        <div class="lesson-content">{{ lesson.content }}</div>
         <p class="lesson-meta">Урок: {{ lesson.position }}</p>
 
         <h2>Задания</h2>
-            {% for task in tasks %}
-                {% with user_answers=user_answers_dict|get_item:task.id %}
+        {% for task in tasks %}
+            {% with user_answers=user_answers_dict|get_item:task.id %}
+                <div class="lesson-task">
                     <p>{{ task.question }}</p>
-                    <div class="lesson-task">
-                        {% if user_answers %}
+                    
+                    {% if user_answers %}
+                        {% for choice in choices|get_item:task.id %}
+                            <label class="lesson-task-answer 
+                                {% if choice.id in user_answers %} 
+                                    {% if choice.is_correct %}lesson-task-correct{% else %}lesson-task-incorrect{% endif %}
+                                {% elif choice.is_correct %}lesson-task-correct-not-chosen
+                                {% else %}lesson-task-incorrect-not-chosen{% endif %}">
+                                <input type="checkbox" 
+                                       {% if choice.id in user_answers %}checked{% endif %} 
+                                       disabled>
+                                {{ choice.answer }}
+                            </label>
+                        {% endfor %}
+                    {% else %}
+                        <form method="post" action="{% url 'api:submit_choice_task_answers' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="user" value="{{ request.user.id }}">
+                            <input type="hidden" name="choice_task" value="{{ task.id }}">
+                            
                             {% for choice in choices|get_item:task.id %}
-                                {% if choice.id in user_answers %}
-                                    <label class="lesson-task-answer 
-                                    {% if choice.is_correct %}
-                                        lesson-task-correct
-                                    {% else %}
-                                        lesson-task-incorrect
-                                    {% endif %}">
-                                        <input type="checkbox" checked>
-                                        {{ choice.answer }}
-                                    </label>
-                                {% elif choice.is_correct %}
-                                    <label class="lesson-task-answer lesson-task-correct-not-chosen">
-                                        <input type="checkbox">
-                                        {{ choice.answer }}
-                                    </label>
-                                {% else %}
-                                    <label class="lesson-task-answer lesson-task-incorrect-not-chosen">
-                                        <input type="checkbox">
-                                        {{ choice.answer }}
-                                    </label>
-                                {% endif %}
+                                <label class="lesson-task-answer">
+                                    <input type="checkbox" name="selected_answers" value="{{ choice.id }}">
+                                    {{ choice.answer }}
+                                </label>
                             {% endfor %}
-                        {% else %}
-                            <form method="post" action="{% url 'api:submit_choice_task_answers' %}">
-                                {% for choice in choices|get_item:task.id %}
-                                        {% csrf_token %}
-                                        <input type="hidden" name="user" value="{{ request.user.id }}">
-                                        <input type="hidden" name="choice_task" value="{{ task.id }}">
-                                        <label class="lesson-task-answer">
-                                                <input type="checkbox" name="selected_answers" value="{{ choice.id }}">
-                                                {{ choice.answer }}
-                                        </label>
-                                {% endfor %}
-                                <button class="send-button" data-lesson-id="{{ lesson.id }}">Отправить</button>
-                            </form>
-                        {% endif %}
-                    {% if not forloop.last %}
-                        <hr>
+                            
+                            <button class="send-button" data-lesson-id="{{ lesson.id }}">Отправить</button>
+                        </form>
                     {% endif %}
-                    </div>
-                {% endwith %}
-            {% endfor %}
+                    
+                    {% if not forloop.last %}<hr>{% endif %}
+                </div>
+            {% endwith %}
+        {% endfor %}
 
         <div class="lesson-nav">
             {% if prev_lesson %}
-            	<a href="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=prev_lesson %}" class="lesson-nav-button prev">← Предыдущий урок</a>
+                <a href="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=prev_lesson %}" 
+                   class="lesson-nav-button prev">← Предыдущий урок</a>
             {% endif %}
             {% if is_all_tasks_completed and next_lesson %}
-                <a href="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=next_lesson %}" class="lesson-nav-button next">Следующий урок →</a>
+                <a href="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=next_lesson %}" 
+                   class="lesson-nav-button next">Следующий урок →</a>
             {% elif next_lesson %}
-                <a class="lesson-nav-button next" 
-                   data-next-lesson-url="{% if next_lesson %}{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=next_lesson %}{% endif %}">
-                   Следующий урок →
+                <a class="lesson-nav-button next" data-next-lesson-url="{% url 'courses:lessons:lesson_details' course_slug=course_slug lesson_position=next_lesson %}">
+                    Следующий урок →
                 </a>
             {% endif %}
         </div>
     </div>
+
     <script type="module" src="{% static 'js/lessons/task_handle.js' %}"></script>
     <script type="module" src="{% static 'js/lessons/lesson_completion.js' %}"></script>
 {% endblock %}

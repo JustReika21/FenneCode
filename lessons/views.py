@@ -1,44 +1,33 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
-from courses.models import Course
-from lessons.models import Lesson
-from tasks.models import ChoiceTask, UserChoiceAnswer
-from api.views import check_lesson_completion
+from lessons.services import LessonService
 
 
 @login_required
 def lesson_details(request, course_slug, lesson_position):
     # TODO: REFACTOR VIEW, API, TEMPLATE, JS
-    course = get_object_or_404(Course, slug=course_slug)
-    lesson = get_object_or_404(Lesson, course=course, position=lesson_position)
+    service = LessonService()
+    course = service.get_course_by_slug(course_slug)
+    lesson = service.get_lesson(course, lesson_position)
     user = request.user
 
-    if lesson_position == 1:
-        prev_lesson = None
-    else:
-        prev_lesson = lesson_position - 1
-        prev_lesson_object = get_object_or_404(Lesson, course=course, position=prev_lesson)
-        user_completed_prev_lesson = prev_lesson_object.user_lesson_complete.filter(id=user.id).exists()
+    prev_lesson = lesson_position - 1 if lesson_position > 1 else None
+
+    if prev_lesson:
+        prev_lesson_object = service.get_lesson(course, prev_lesson)
+        user_completed_prev_lesson = service.is_user_lesson_complete(prev_lesson_object, user.id)
         if not user_completed_prev_lesson:
             raise PermissionDenied
 
-    if Lesson.objects.filter(course=course, position=lesson_position+1).exists():
-        next_lesson = lesson_position + 1
-    else:
-        next_lesson = None
+    next_lesson = lesson_position + 1 if service.lesson_exists(course, lesson_position + 1) else None
 
-    tasks = ChoiceTask.objects.prefetch_related('answers').filter(lesson=lesson).only('id')
+    tasks = service.get_all_lesson_tasks(lesson)
 
-    choices = {task.id: list(task.answers.only('id', 'is_correct', 'answer')) for task in tasks}
+    choices = service.get_choices_for_tasks(tasks)
 
-    user_answers_dict = {task.id: set(
-            UserChoiceAnswer.objects.filter(choice_task=task)
-            .values_list('selected_answers__id', flat=True)
-        )
-        for task in tasks
-    }
+    user_answers_dict = service.get_user_answers_for_tasks(tasks, user.id)
 
     count_tasks = len(tasks)
     count_completed_tasks = sum(1 for task in tasks if user_answers_dict.get(task.id))
