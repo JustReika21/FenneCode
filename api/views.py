@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from accounts.models import Account
 from courses.models import Course, Enrollment
 from lessons.models import Lesson
+from reviews.models import Review
 from tasks.models import Answer, ChoiceTask, UserChoiceAnswer
 
 
@@ -72,7 +73,7 @@ def check_lesson_completion(request, lesson_id):
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
     try:
         user_id = request.user.id
-        lesson = Lesson.objects.get(id=lesson_id)
+        lesson = Lesson.objects.prefetch_related('lessons').get(id=lesson_id)
         count_tasks = lesson.lessons.count()
         count_completed_tasks = UserChoiceAnswer.objects.filter(choice_task__lesson=lesson, user=user_id).count()
         is_all_tasks_completed = count_completed_tasks == count_tasks
@@ -84,3 +85,33 @@ def check_lesson_completion(request, lesson_id):
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'Data is incorrect'}, status=400)
 
+
+def submit_course_review(request):
+    if request.method != "POST":
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+    try:
+        user = request.user
+        course_id = request.POST.get('course')
+        text = request.POST.get('text')
+        rating = request.POST.get('rating')
+
+        course = Course.objects.get(id=course_id)
+
+        is_user_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+        if not is_user_enrolled:
+            return JsonResponse({'error': 'User has not enrolled'}, status=400)
+
+        Review.objects.create(
+            user=user,
+            course=course,
+            text=text,
+            rating=rating
+        )
+        return JsonResponse({
+            'success': 'Review left successfully',
+            'text': text,
+            'rating': rating,
+            'username': user.username
+        }, status=200)
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'Data is incorrect'}, status=400)

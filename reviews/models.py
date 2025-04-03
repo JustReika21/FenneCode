@@ -15,7 +15,9 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        models.UniqueConstraint(fields=['user', 'course'], name='unique_review')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'course'], name='unique_review')
+        ]
 
     def __str__(self):
         return f'{self.user} {self.course} ({self.rating}/10)'

@@ -1,8 +1,7 @@
-from django.contrib import messages
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 
-from courses.forms import EnrollmentForm
+from courses.forms import CourseReviewForm
 from courses.models import Course, Enrollment
 
 
@@ -30,12 +29,14 @@ def course_info(request, course_slug):
     except Course.DoesNotExist:
         raise Http404
     lessons = course.lessons.all().order_by('position')
-    reviews = course.reviews.all()
+    reviews = course.reviews.all().order_by('-created_at')
     user = request.user
     completed_lessons = get_completed_lessons(user, course)
     is_user_enrolled = False
     if user.is_authenticated:
         is_user_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+
+    rating_choices = [i for i in range(1, 11)]
 
     context = {
         'course': course,
@@ -43,5 +44,6 @@ def course_info(request, course_slug):
         'reviews': reviews,
         'completed_lessons': completed_lessons,
         'is_user_enrolled': is_user_enrolled,
+        'rating_choices': rating_choices
     }
     return render(request, 'courses/course_info.html', context)

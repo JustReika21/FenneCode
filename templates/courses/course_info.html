@@ -6,7 +6,7 @@
     <div class="course-container">
         <h1 class="course-title">{{ course.title }}</h1>
         <p class="course-meta">
-            Автор: <strong>{{ course.author }}</strong> | Обновлён: {{ course.updated_at }}
+            Автор: <strong>{{ course.author }}</strong> | Обновлён: {{ course.updated_at|date:"d/m/y" }}
         </p>
         <h2>Описание</h2>
         <p class="course-description">{{ course.description }}</p>
@@ -66,14 +66,45 @@
                 {% endfor %}
             </div>
         {% endif %}
+    
+        {% if is_user_enrolled %}
+            <h2>Оставьте свой отзыв</h2>
+            <form method="post" class="review-form" action="{% url 'api:submit_course_review' %}">
+                {% csrf_token %}
+                <input type="hidden" name="user" value="{{ request.user.id }}">
+                <input type="hidden" name="course" value="{{ course.id }}">
+
+                <label for="text">Ваш отзыв:</label>
+                <textarea name="text" id="text" rows="4" required placeholder="Напишите, что думаете..."></textarea>
+
+                <div class="form-group">
+                    <label for="rating" class="hidden"></label>
+                    <select name="rating" id="rating" required>
+                        {% for value in rating_choices %}
+                            <option value="{{ value }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="submit-button">Отправить</button>
+                </div>
+            </form>
+        {% endif %}
 
         <h2>Отзывы</h2>
-        {% for review in reviews %}
-            {{ review.user.username }}
-            {{ review.created_at }}
-            {{ review.text }}
-            {{ review.rating }}
-        {% endfor %}
+        <div class="reviews">
+            {% for review in reviews %}
+                <div class="review">
+                    <div class="review-header">
+                        <span class="review-user">{{ review.user.username }}</span>
+                        <span class="review-date">{{ review.created_at|date:"d/m/y" }}</span>
+                    </div>
+                    <p class="review-text">{{ review.text }}</p>
+                    <p class="review-rating">⭐ {{ review.rating }}/10</p>
+                </div>
+            {% empty %}
+                <p class="no-reviews">Пока отзывов нет. Будьте первым!</p>
+            {% endfor %}
+        </div>
     </div>
-    <script src="{% static 'js/courses/courses_info.js' %}"></script>
+    <script src="{% static 'js/courses/enrollment_handler.js' %}"></script>
+    <script src="{% static 'js/courses/review_submit.js' %}"></script>
 {% endblock %}
