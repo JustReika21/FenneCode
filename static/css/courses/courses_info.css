@@ -23,6 +23,8 @@ h2 {
     color: #bbb;
     margin-bottom: 15px;
     white-space: pre-line;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .course-meta {
