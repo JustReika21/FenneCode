@@ -9,9 +9,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+    <div class="page-wrapper">
     {% include 'includes/header.html' %}
-    {% block content %}
-    {% endblock %}
+    
+    <main class="flex-grow-1">
+        {% block content %}
+        {% endblock %}
+    </main>
+    
     {% include 'includes/footer.html' %}
+    </div>
 </body>
 </html>

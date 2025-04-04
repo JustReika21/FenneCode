@@ -1,0 +1,13 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+<footer class="site-footer">
+    <div class="footer-container">
+        <p>&copy; 2025 Моя Платформа Обучения. Все права защищены.</p>
+        <nav class="footer-nav">
+            <a href="{% url 'core:home' %}">Главная</a>
+            <a href="{% url 'courses:courses' %}">Курсы</a>
+            <a href="#">О нас</a>
+            <a href="https://github.com/JustReika21/FenneCode">GitHub</a>
+        </nav>
+    </div>
+</footer>

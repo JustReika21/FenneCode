@@ -3,6 +3,7 @@
 {% block content %}
     <title>Курсы</title>
     <link rel="stylesheet" href="{% static 'css/courses/courses.css' %}">
+    <h1 style="text-align: center; margin-top: 10px; margin-bottom: 0; padding: 0">Каталог</h1>
     <div class="courses-container">
         {% for course in courses %}
             <a href="{{ course.slug }}" class="course-card" style="text-decoration: none">

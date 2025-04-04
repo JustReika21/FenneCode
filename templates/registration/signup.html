@@ -1,45 +1,36 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
     <title>Регистрация</title>
-    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <div class="card" style="width: 400px;">
-            <div class="card-body">
-                <h3 class="card-title text-center">Регистрация</h3>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.errors }}
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Никнейм</label>
-                        <input type="text" class="form-control" name="username" placeholder="Никнейм" required autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Имя</label>
-                        <input type="text" class="form-control" name="first_name" placeholder="Имя" required autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Фамилия</label>
-                        <input type="text" class="form-control" name="last_name" placeholder="Фамилия" required autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Адрес электронной почты</label>
-                        <input type="email" class="form-control" name="email" placeholder="Адрес электронной почты" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Пароль</label>
-                        <input type="password" class="form-control" name="password1" placeholder="Пароль" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Подтверждение пароля</label>
-                        <input type="password" class="form-control" name="password2" placeholder="Подтверждение пароля" required>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Зарегестрироваться</button>
-                    </div>
-                </form>
-                <p class="mt-3 text-center">
-                   Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a>
-                </p>
-            </div>
+    <link rel="stylesheet" href="{% static 'css/registration/signup.css' %}">
+    
+    <div class="signup-page">
+        <div class="signup-card">
+            <h3 class="signup-title">Регистрация</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.errors }}
+                <div class="form-group">
+                    <label for="username">Никнейм</label>
+                    <input type="text" name="username" placeholder="Никнейм" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="email">Адрес электронной почты</label>
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password1">Пароль</label>
+                    <input type="password" name="password1" placeholder="Пароль" required>
+                </div>
+                <div class="form-group">
+                    <label for="password2">Подтверждение пароля</label>
+                    <input type="password" name="password2" placeholder="Подтвердите пароль" required>
+                </div>
+                <button type="submit" class="signup-button">Зарегистрироваться</button>
+            </form>
+            <p class="login-link">
+                Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a>
+            </p>
         </div>
     </div>
 {% endblock %}
