@@ -1,5 +1,36 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-	<title>FenneCode</title>
-    <h1>Welcome!</h1>
+    <title>FenneCode</title>
+    <link rel="stylesheet" href="{% static 'css/core/index.css' %}">
+    <div class="homepage-wrapper">
+        <div class="hero-section">
+            <h1 class="hero-title">FenneCode — Учись программировать эффективно</h1>
+            <p class="hero-subtitle">Курсы, которые сделают из тебя разработчика</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Интерактивное обучение</h3>
+                <p>Учи язык, сразу применяя его в задачах. Теория и практика в одном месте.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Курсы под любые цели</h3>
+                <p>Frontend, Backend, алгоритмы — начинай с любого уровня и расти шаг за шагом.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Реальные задачи</h3>
+                <p>Учись решать то, с чем сталкиваются программисты каждый день — и стань готовым к работе.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Сообщество и поддержка</h3>
+                <p>Обсуждай, делись, получай советы от единомышленников.</p>
+            </div>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="{% url 'courses:courses' %}" class="cta-button">Каталог курсов</a>
+            <a href="#" class="cta-button">О платформе</a>
+        </div>
+    </div>
 {% endblock %}
