@@ -5,7 +5,7 @@ from courses.models import Enrollment
 
 
 def profile(request, user_id):
-    user_profile = Account.objects.get(id=user_id)
+    user_profile = Account.objects.select_related('profile').get(id=user_id)
     user_courses = Enrollment.objects.select_related(
         'course'
     ).only(

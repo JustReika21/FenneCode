@@ -9,11 +9,23 @@
 
         <div class="profile-card">
             <div class="profile-avatar">
-                <img src="{% static 'img/logo.png' %}" alt="Аватар">
+                <img src="{{ user_profile.profile.avatar.url }}" alt="Аватар">
+                {% if user_profile.profile.user == request.user %}
+                	<a href="#">
+                        <button class="redirect-button">Редактировать</button>
+                    </a>
+                {% endif %}
             </div>
             <div class="profile-info">
-                <p><strong>Никнейм:</strong> {{ user_profile.username }}</p>
-                <p><strong>Дата регистрации:</strong> {{ user_profile.date_joined|date:"d/m/y" }}</p>
+                <p><strong>Никнейм: </strong>{{ user_profile.username }}</p>
+                <p><strong>Дата регистрации: </strong>{{ user_profile.date_joined|date:"d/m/y" }}</p>
+                {% if user_profile.profile.bio %}
+                    <p><strong>О себе: </strong>{{ user_profile.profile.bio }}</p>
+                {% endif %}
+                {% if user_profile.profile.telegram %}
+                	<p><strong>Телеграм: </strong><a href="{{ user_profile.profile.telegram_link }}">{{ user_profile.profile.telegram }}</a></p>
+                {% endif %}
+
             </div>
         </div>
 

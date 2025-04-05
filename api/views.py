@@ -96,7 +96,6 @@ def mark_lesson_complete(request, lesson_id):
         course = lesson.course
         count_lessons = course.lessons.count()
         count_completed_lessons = course.lessons.filter(user_lesson_complete__id=user_id).count()
-        print(count_lessons, count_completed_lessons)
         user_progress = count_completed_lessons / count_lessons * 100
         enrollment.progress = round(user_progress, 2)
         enrollment.save(update_fields=["progress"])
