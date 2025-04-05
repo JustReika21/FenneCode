@@ -3,7 +3,7 @@
 {% block content %}
     <title>Курсы</title>
     <link rel="stylesheet" href="{% static 'css/courses/courses.css' %}">
-    <h1 style="text-align: center; margin-top: 10px; margin-bottom: 0; padding: 0">Каталог</h1>
+    <h1 style="text-align: center; margin-top: 12px; margin-bottom: 0; padding: 0; color: #ffa726;">Каталог</h1>
     <div class="courses-container">
         {% for course in courses %}
             <a href="{{ course.slug }}" class="course-card" style="text-decoration: none">
@@ -11,7 +11,7 @@
                 <div class="course-info">
                     <h2>{{ course.title }}</h2>
                     <p>{{ course.description }}</p>
-                    <span class="author">Автор: {{ course.author.username }}</span>
+                    <span class="author" style="display: flex; justify-content: space-between">Автор: {{ course.author.username }} <span>🕒 {{ course.duration }} мес.</span></span>
                 </div>
             </a>
         {% endfor %}

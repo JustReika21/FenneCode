@@ -1,4 +1,47 @@
 {% extends 'base.html' %}
-{% block content%}
-    <title>Профиль</title>
+{% load static %}
+{% block content %}
+    <title>Профиль пользователя</title>
+    <link rel="stylesheet" href="{% static 'css/user_profile/profile.css' %}">
+
+    <div class="profile-wrapper">
+        <h1 class="profile-header">Профиль</h1>
+
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <img src="{% static 'img/logo.png' %}" alt="Аватар">
+            </div>
+            <div class="profile-info">
+                <p><strong>Никнейм:</strong> {{ user_profile.username }}</p>
+                <p><strong>Дата регистрации:</strong> {{ user_profile.date_joined|date:"d/m/y" }}</p>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h3>Ваши курсы</h3>
+            {% if user_courses %}
+                <div class="courses-list">
+                {% for course in user_courses %}
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="{{ course.course.cover.url }}" alt="course title">
+                        </div>
+                        <div class="course-info profile-link">
+                            <a href="{% url 'courses:course_info' course.course.slug %}">
+                                <h4>{{ course.course.title }}</h4>
+                            </a>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: {{ course.progress }}%;"></div>
+                                <div class="progress-text">{{ course.progress }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <p>Пользователь не подписан ни на один курс</p>
+            {% endif %}
+        </div>
+
+    </div>
 {% endblock %}

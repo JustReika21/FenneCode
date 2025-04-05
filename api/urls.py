@@ -20,6 +20,11 @@ urlpatterns = [
         name='check_lesson_completion'
     ),
     path(
+        'mark_lesson_complete/<int:lesson_id>',
+        views.mark_lesson_complete,
+        name='mark_lesson_complete'
+    ),
+    path(
         'submit_course_review/',
         views.submit_course_review,
         name='submit_course_review'

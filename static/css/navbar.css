@@ -97,6 +97,7 @@ nav ul li span {
     font-weight: bold;
     color: white;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 nav ul li span:hover {
@@ -124,6 +125,7 @@ nav ul li span:hover {
     font-weight: bold;
     width: 100%;
     display: block;
+    transition: all 0.3s ease-in-out;
 }
 
 @media (max-width: 768px) {

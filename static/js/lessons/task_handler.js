@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.success) {
                     this.remove();
                     updateTaskStatus(data, form);
-                    checkLessonCompletion(lessonId);
+                    checkLessonCompletion(lessonId, csrfToken);
                 } else {
                     throw new Error("Ошибка: " + data.message);
                 }

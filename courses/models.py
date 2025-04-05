@@ -26,4 +26,6 @@ class Enrollment(models.Model):
     enrolled_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        models.UniqueConstraint(fields=['course', 'user'], name='unique_enrollment')
+        constraints = [
+            models.UniqueConstraint(fields=['course', 'user'], name='unique_enrollment')
+        ]

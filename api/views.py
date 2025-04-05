@@ -77,11 +77,31 @@ def check_lesson_completion(request, lesson_id):
         count_tasks = lesson.lessons.count()
         count_completed_tasks = UserChoiceAnswer.objects.filter(choice_task__lesson=lesson, user=user_id).count()
         is_all_tasks_completed = count_completed_tasks == count_tasks
-        if is_all_tasks_completed:
-            lesson.user_lesson_complete.add(user_id)
         return JsonResponse({
             'is_all_tasks_completed': is_all_tasks_completed,
         })
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'Data is incorrect'}, status=400)
+
+
+def mark_lesson_complete(request, lesson_id):
+    if request.method != "POST":
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=405)
+    try:
+        user_id = request.user.id
+        lesson = Lesson.objects.prefetch_related('lessons').get(id=lesson_id)
+        lesson.user_lesson_complete.add(user_id)
+
+        enrollment = Enrollment.objects.get(user_id=user_id, course_id=lesson.course_id)
+        course = lesson.course
+        count_lessons = course.lessons.count()
+        count_completed_lessons = course.lessons.filter(user_lesson_complete__id=user_id).count()
+        print(count_lessons, count_completed_lessons)
+        user_progress = count_completed_lessons / count_lessons * 100
+        enrollment.progress = round(user_progress, 2)
+        enrollment.save(update_fields=["progress"])
+
+        return JsonResponse({'status': 'success'})
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'Data is incorrect'}, status=400)
 

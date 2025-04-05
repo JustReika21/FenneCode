@@ -1,14 +1,29 @@
-export function checkLessonCompletion(lessonId) {
+export function checkLessonCompletion(lessonId, csrfToken) {
     fetch(`/api/check_lesson_completion/${lessonId}`)
         .then(response => response.json())
         .then(data => {
             if (data.is_all_tasks_completed) {
-                let nextLessonButton = document.querySelector(".lesson-nav-button.next");
-                let nextLessonUrl = nextLessonButton.getAttribute("data-next-lesson-url");
+                fetch(`/api/mark_lesson_complete/${lessonId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: "same-origin",
+                })
+                .then(markResponse => {
+                    if (!markResponse.ok) {
+                        console.warn("Could not mark lesson as complete");
+                        return;
+                    }
 
-                if (nextLessonUrl) {
-                    nextLessonButton.setAttribute("href", nextLessonUrl);
-                }
+                    const nextLessonButton = document.querySelector(".lesson-nav-button.next");
+                    const nextLessonUrl = nextLessonButton?.getAttribute("data-next-lesson-url");
+
+                    if (nextLessonUrl) {
+                        nextLessonButton.setAttribute("href", nextLessonUrl);
+                    }
+                });
             }
         })
         .catch(error => {
