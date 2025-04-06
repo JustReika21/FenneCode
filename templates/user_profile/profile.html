@@ -11,7 +11,7 @@
             <div class="profile-avatar">
                 <img src="{{ user_profile.profile.avatar.url }}" alt="Аватар">
                 {% if user_profile.profile.user == request.user %}
-                	<a href="#">
+                	<a href="{% url 'user_profile:edit_profile' user_profile.profile.user.id %}">
                         <button class="redirect-button">Редактировать</button>
                     </a>
                 {% endif %}
@@ -25,7 +25,6 @@
                 {% if user_profile.profile.telegram %}
                 	<p><strong>Телеграм: </strong><a href="{{ user_profile.profile.telegram_link }}">{{ user_profile.profile.telegram }}</a></p>
                 {% endif %}
-
             </div>
         </div>
 

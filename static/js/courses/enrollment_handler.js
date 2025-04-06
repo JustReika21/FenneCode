@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .then(data => {
-                if (data.status === "ok") {
+                if (data.status === "success") {
                     let message = document.createElement("p");
                     message.classList.add("course-description");
                     message.textContent = "Вы подписаны";

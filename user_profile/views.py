@@ -19,3 +19,7 @@ def profile(request, user_id):
         'user_courses': user_courses,
     }
     return render(request, 'user_profile/profile.html', context)
+
+
+def edit_profile(request, user_id):
+    return render(request, 'user_profile/edit_profile.html')

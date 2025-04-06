@@ -1,7 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from courses.forms import CourseReviewForm
 from courses.models import Course, Enrollment
 
 

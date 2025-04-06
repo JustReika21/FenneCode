@@ -8,7 +8,10 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('enroll/', views.enroll_course, name='enroll_course'),
+    path('enroll/',
+         views.enroll_course,
+         name='enroll_course'
+         ),
     path(
         'submit_choice_task_answer/',
         views.submit_choice_task_answers,
@@ -28,5 +31,10 @@ urlpatterns = [
         'submit_course_review/',
         views.submit_course_review,
         name='submit_course_review'
+    ),
+    path(
+        'edit_profile/',
+        views.edit_profile,
+        name='edit_profile'
     )
 ]

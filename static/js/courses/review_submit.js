@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return response.json();
             })
             .then(data => {
-                if (data.success) {
+                if (data.status === "success") {
                     showReviewOnPage(data)
                 } else {
                     throw new Error("Ошибка: " + data.message);

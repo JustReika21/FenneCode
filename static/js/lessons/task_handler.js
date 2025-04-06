@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
+                if (data.status === "success") {
                     this.remove();
                     updateTaskStatus(data, form);
                     checkLessonCompletion(lessonId, csrfToken);
