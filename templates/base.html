@@ -14,7 +14,8 @@
     <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
     
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/core/custom_alerts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/includes/navbar.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -26,5 +27,6 @@
         </div>
     {% include 'includes/footer.html' %}
     </div>
+    <script src="{% static 'js/core/custom_alerts.js' %}"></script>
 </body>
 </html>

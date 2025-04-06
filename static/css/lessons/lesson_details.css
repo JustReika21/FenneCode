@@ -104,6 +104,7 @@
 
 .lesson-task-correct {
     background: #00990099;
+    transition: background-color 0.5s;
 }
 
 .lesson-task-correct:hover {
@@ -112,6 +113,7 @@
 
 .lesson-task-incorrect {
     background: #990000;
+    transition: background-color 0.5s;
 }
 .lesson-task-incorrect:hover {
     background: #aa0000;
@@ -119,8 +121,10 @@
 
 .lesson-task-incorrect-not-chosen {
     color: #990000;
+    transition: color 0.5s;
 }
 
 .lesson-task-correct-not-chosen {
     color: #00990099;
+    transition: color 0.5s;
 }

@@ -31,7 +31,11 @@
                 <input type="text" name="telegram" id="id_telegram" value="{{ user.profile.telegram }}">
             </div>
     
-            <button type="submit" class="submit-button">Сохранить изменения</button>
+            <button type="submit"
+                    class="submit-button"
+                    data-profile-url="{% url 'user_profile:profile' request.user.id %}">
+                Сохранить изменения
+            </button>
         </form>
     </div>
     <script src="{% static 'js/profile/edit_profile.js' %}"></script>

@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch((error) => {
                 console.error("Ошибка:", error);
-                alert("Произошла ошибка при отправке запроса");
+                showToast("Произошла ошибка при отправке запроса", 3000);
             });
         });
     });

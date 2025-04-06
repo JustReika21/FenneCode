@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click',function (event) {
             event.preventDefault();
 
+            let userProfileUrl = this.getAttribute('data-profile-url');
             let form = this.closest('form');
             let formData = new FormData(form);
             let csrfToken = formData.get("csrfmiddlewaretoken");
@@ -21,18 +22,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    this.remove()
+                    showToast("Данные обновлены успешно", 3000)
                 } else {
                     const errors = data.errors || {};
                     const messages = [];
 
                     for (let field in errors) {
                         if (errors[field].length > 0) {
-                            messages.push(errors[field][0]); // 👈 just first error
+                            messages.push(errors[field][0]);
                         }
                     }
 
-                    alert(messages.join('\n'));
+                    showToast(messages.join('\n'), 5000);
                 }
             })
             .catch((error) => {
