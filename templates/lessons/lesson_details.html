@@ -33,7 +33,6 @@
                     {% else %}
                         <form method="post" action="{% url 'api:submit_choice_task_answers' %}">
                             {% csrf_token %}
-                            <input type="hidden" name="user" value="{{ request.user.id }}">
                             <input type="hidden" name="choice_task" value="{{ task.id }}">
 
                             {% for choice in choices|get_item:task.id %}

@@ -9,7 +9,7 @@ class Profile(models.Model):
     telegram = models.CharField(
         max_length=32,
         blank=True,
-        help_text="Введите без @"
+        help_text="Введите без @",
     )
     avatar = models.ImageField(upload_to="user_avatars/", default='user_avatars/default.jpg')
 

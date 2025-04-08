@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 if (data.status === "success") {
+                    showToast('Вы успешно записались на курс', 3000)
                     let message = document.createElement("p");
                     message.classList.add("course-description");
                     message.textContent = "Вы подписаны";

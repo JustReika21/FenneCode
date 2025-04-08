@@ -7,7 +7,7 @@ from courses.models import Course
 class Review(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='reviews')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='reviews')
-    text = models.CharField(max_length=1024)
+    text = models.TextField(blank=True)
     rating = models.SmallIntegerField(
         default=0,
         choices=[(i, i) for i in range(1, 11)],

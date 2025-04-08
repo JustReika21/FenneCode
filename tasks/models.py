@@ -40,3 +40,8 @@ class UserChoiceAnswer(models.Model):
 
     def __str__(self):
         return f'Пользователь: {self.choice_task} - Задание: {self.choice_task}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'choice_task'], name='unique_user_choice_answer'),
+        ]

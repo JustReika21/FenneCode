@@ -26,42 +26,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     updateTaskStatus(data, form);
                     checkLessonCompletion(lessonId, csrfToken);
                 } else {
-                    throw new Error("Ошибка: " + data.message);
+                    throw new Error(data.message);
                 }
             })
             .catch((error) => {
-                console.error("Ошибка:", error);
-                showToast("Произошла ошибка при отправке запроса", 3000);
+                console.error(error);
+                showToast(error, 3000);
             });
         });
     });
 });
 
 function updateTaskStatus(data, form) {
-    data.correct_chosen.forEach(correctId => {
-        document.querySelector(`input[value="${correctId}"]`)
-            ?.closest('.lesson-task-answer')
-            ?.classList.add('lesson-task-correct');
-    });
+    console.log('Data received:', data);
 
-    data.incorrect_chosen.forEach(incorrectId => {
-        document.querySelector(`input[value="${incorrectId}"]`)
-            ?.closest('.lesson-task-answer')
-            ?.classList.add('lesson-task-incorrect');
-    });
+    const highlight = (ids, className) => {
+        ids.forEach(id => {
+            const input = form.querySelector(`input[value="${id}"]`);
+            input?.closest('.lesson-task-answer')?.classList.add(className);
+        });
+    };
 
-    data.correct_not_chosen.forEach(correctId => {
-        document.querySelector(`input[value="${correctId}"]`)
-            ?.closest('.lesson-task-answer')
-            ?.classList.add('lesson-task-correct-not-chosen');
-    });
+    highlight(data.correct_chosen || [], 'lesson-task-correct');
+    highlight(data.incorrect_chosen || [], 'lesson-task-incorrect');
+    highlight(data.correct_not_chosen || [], 'lesson-task-correct-not-chosen');
+    highlight(data.incorrect_not_chosen || [], 'lesson-task-incorrect-not-chosen');
 
-    data.incorrect_not_chosen.forEach(incorrectId => {
-        document.querySelector(`input[value="${incorrectId}"]`)
-            ?.closest('.lesson-task-answer')
-            ?.classList.add('lesson-task-incorrect-not-chosen');
-    });
-    form.querySelectorAll(".lesson-task-answer input[type='checkbox']").forEach(checkbox => {
-        checkbox.disabled = true;
-    });
+    form.querySelectorAll(".lesson-task-answer input[type='checkbox'], .lesson-task-answer input[type='radio']")
+        .forEach(input => input.disabled = true);
 }
+

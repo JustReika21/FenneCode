@@ -1,9 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Profile
-from django.core.files.images import get_image_dimensions
 from PIL import Image
-from io import BytesIO
 import re
 
 
@@ -13,8 +11,8 @@ class ProfileEditForm(forms.ModelForm):
         fields = ['bio', 'telegram', 'avatar']
 
     def clean_telegram(self):
-        telegram = self.cleaned_data['telegram']
-        if telegram and not re.match(r'^[a-zA-Z0-9_]{5,32}$', telegram):
+        telegram = self.cleaned_data['telegram'].strip()
+        if telegram and not re.match(r'^[a-zA-Z0-9_]{0,32}$', telegram):
             raise ValidationError('Введите действительный телеграм')
         return telegram
 
@@ -41,7 +39,7 @@ class ProfileEditForm(forms.ModelForm):
         return avatar
 
     def clean_bio(self):
-        bio = self.cleaned_data['bio']
+        bio = self.cleaned_data['bio'].strip()
         if bio and len(bio) > 200:
             raise ValidationError("Информация о себе не должна превышать 200 символов")
         return bio

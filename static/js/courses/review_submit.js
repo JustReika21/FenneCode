@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".submit-button").forEach((button) =>
         button.addEventListener("click", function(event) {
             event.preventDefault();
+
             let form = this.closest("form");
             let formData = new FormData(form);
             let csrfToken = formData.get("csrfmiddlewaretoken");
@@ -16,17 +17,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 credentials: "same-origin",
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    showReviewOnPage(data)
+                    showReviewOnPage(data);
+                    showToast(data.message);
                 } else {
-                    throw new Error("Ошибка: " + data.message);
+                    let message = "";
+                    if (typeof data.errors === 'string') {
+                        message = data.errors;
+                    } else {
+                        for (let key in data.errors) {
+                            if (data.errors[key][0]?.message) {
+                                message += data.errors[key][0].message + "\n";
+                            }
+                        }
+                    }
+                    showToast(message.trim(), 5000);
                 }
             })
             .catch((error) => {
@@ -38,9 +45,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function showReviewOnPage(data) {
-    if (!data.success) return;
+    if (data.status !== "success" || !data.review) return;
 
     const reviewsContainer = document.querySelector('.reviews');
+    if (!reviewsContainer) return;
 
     const reviewDiv = document.createElement('div');
     reviewDiv.classList.add('review');
@@ -50,22 +58,22 @@ function showReviewOnPage(data) {
 
     const userSpan = document.createElement('span');
     userSpan.classList.add('review-user');
-    userSpan.textContent = data.username;
+    userSpan.textContent = data.review.username;
 
     const dateSpan = document.createElement('span');
     dateSpan.classList.add('review-date');
-    dateSpan.textContent = 'Только что'
+    dateSpan.textContent = 'Только что';
 
     reviewHeader.appendChild(userSpan);
     reviewHeader.appendChild(dateSpan);
 
     const reviewText = document.createElement('p');
     reviewText.classList.add('review-text');
-    reviewText.textContent = `${data.text}`;
+    reviewText.textContent = data.review.text;
 
     const reviewRating = document.createElement('p');
     reviewRating.classList.add('review-rating');
-    reviewRating.textContent = `⭐ ${data.rating}/10`;
+    reviewRating.textContent = `⭐ ${data.review.rating}/10`;
 
     reviewDiv.appendChild(reviewHeader);
     reviewDiv.appendChild(reviewText);
@@ -73,6 +81,8 @@ function showReviewOnPage(data) {
 
     reviewsContainer.insertBefore(reviewDiv, reviewsContainer.firstChild);
 
-    document.querySelector(".review-form").reset();
+    const form = document.querySelector(".review-form");
+    if (form) form.reset();
 }
+
 
