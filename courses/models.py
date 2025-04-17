@@ -1,5 +1,6 @@
-from django.contrib.auth import get_user_model
 from django.db import models
+
+from fennecode import settings
 
 
 class Course(models.Model):
@@ -9,9 +10,17 @@ class Course(models.Model):
     duration = models.SmallIntegerField()
     # TODO: rating
     # rating = DecimalField?
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='authors')
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='authors'
+    )
     slug = models.SlugField(unique=True)
-    cover = models.ImageField(upload_to="courses_covers/", default='courses_covers/default.jpg')
+    cover = models.ImageField(
+        upload_to="courses_covers/",
+        default='courses_covers/default.jpg'
+    )
+    total_points = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -20,12 +29,24 @@ class Course(models.Model):
 
 
 class Enrollment(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='enrollments')
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='enrollments'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='enrollments'
+    )
     progress = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    points = models.IntegerField(default=0)
     enrolled_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['course', 'user'], name='unique_enrollment')
+            models.UniqueConstraint(
+                fields=['course', 'user'],
+                name='unique_enrollment'
+            )
         ]

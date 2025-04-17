@@ -5,7 +5,7 @@ from tasks.models import ChoiceTask, Answer, UserChoiceAnswer
 
 @admin.register(ChoiceTask)
 class ChoiceTaskAdmin(admin.ModelAdmin):
-    list_display = ('lesson', 'question', 'question_type')
+    list_display = ('lesson', 'question')
 
 
 @admin.register(Answer)

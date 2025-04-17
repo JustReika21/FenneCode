@@ -4,10 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET, require_POST
 
 from accounts.models import Account
-from api.services import user_has_access_to_task, evaluate_answers, is_user_enrolled
+from api.services import (
+    user_has_access_to_task,
+    evaluate_answers,
+    is_user_enrolled
+)
 from courses.models import Course, Enrollment
 from lessons.models import Lesson
-from reviews.models import Review
 from tasks.models import Answer, ChoiceTask, UserChoiceAnswer
 from user_profile.models import Profile
 
@@ -86,14 +89,19 @@ def submit_choice_task_answers(request):
 
     result_answers = evaluate_answers(answers, user_answers)
 
-    if UserChoiceAnswer.objects.filter(user=user, choice_task=task).exists():
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Вы уже оставили ответ'
-        }, status=403)
+    is_correct = result_answers['is_correct']
+    points = 0
+    if is_correct:
+        points = task.points
+        enrollment = Enrollment.objects.get(
+            user=user,
+            course=task.lesson.course
+        )
+        enrollment.points += points
+        enrollment.save()
 
     user_answer = UserChoiceAnswer.objects.create(
-        user=user, choice_task=task, is_correct=result_answers['is_correct']
+        user=user, choice_task=task, points=points
     )
     user_answer.selected_answers.set(user_answers)
 
@@ -108,7 +116,9 @@ def submit_choice_task_answers(request):
 @login_required
 def check_lesson_completion(request, lesson_id):
     try:
-        lesson = Lesson.objects.prefetch_related('lessons').get(id=lesson_id)
+        lesson = Lesson.objects.prefetch_related(
+            'choice_tasks'
+        ).get(id=lesson_id)
     except Lesson.DoesNotExist:
         return JsonResponse({
             'status': 'error',
@@ -116,7 +126,7 @@ def check_lesson_completion(request, lesson_id):
         })
     user = request.user
 
-    count_tasks = lesson.lessons.count()
+    count_tasks = lesson.choice_tasks.count()
     count_completed_tasks = UserChoiceAnswer.objects.filter(
         choice_task__lesson=lesson,
         user=user
@@ -155,7 +165,9 @@ def mark_lesson_complete(request, lesson_id):
     lesson.user_lesson_complete.add(user)
 
     total_lessons = lesson.course.lessons.count()
-    total_completed_lessons = lesson.course.lessons.filter(user_lesson_complete=user).count()
+    total_completed_lessons = lesson.course.lessons.filter(
+        user_lesson_complete=user
+    ).count()
     user_progress = total_completed_lessons / total_lessons * 100
     enrollment.progress = round(user_progress, 2)
     enrollment.save(update_fields=["progress"])
@@ -180,7 +192,7 @@ def submit_course_review(request):
     if not form.is_valid():
         return JsonResponse({
             'status': 'error',
-            'errors': form.errors
+            'errors': form.errors.get_json_data()
         }, status=400)
 
     try:
@@ -195,12 +207,6 @@ def submit_course_review(request):
         return JsonResponse({
             'status': 'error',
             'errors': 'Вы не записаны на курс'
-        }, status=400)
-
-    if Review.objects.filter(user=user, course=course).exists():
-        return JsonResponse({
-            'status': 'error',
-            'errors': 'Вы уже оставили отзыв'
         }, status=400)
 
     review = form.save()

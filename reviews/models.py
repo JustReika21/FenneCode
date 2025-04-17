@@ -1,12 +1,20 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 
 from courses.models import Course
+from fennecode import settings
 
 
 class Review(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='reviews')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
     text = models.TextField(blank=True)
     rating = models.SmallIntegerField(
         default=0,
@@ -16,3 +24,11 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.user} {self.course} ({self.rating}/10)'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'course'],
+                name='unique_review'
+            ),
+        ]

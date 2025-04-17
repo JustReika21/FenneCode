@@ -33,7 +33,10 @@ def course_info(request, course_slug):
     completed_lessons = get_completed_lessons(user, course)
     is_user_enrolled = False
     if user.is_authenticated:
-        is_user_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+        is_user_enrolled = Enrollment.objects.filter(
+            user=user,
+            course=course
+        ).exists()
 
     rating_choices = [i for i in range(1, 11)]
 

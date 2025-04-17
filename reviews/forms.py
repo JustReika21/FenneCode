@@ -12,7 +12,9 @@ class ReviewForm(forms.ModelForm):
     def clean_text(self):
         text = self.cleaned_data['text'].strip()
         if len(text) > 1000:
-            raise ValidationError("Текст должен содержать не более 1000 символов")
+            raise ValidationError(
+                "Текст должен содержать не более 1000 символов"
+            )
         return text
 
     def clean_rating(self):

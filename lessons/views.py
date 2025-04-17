@@ -7,7 +7,6 @@ from lessons.services import LessonService
 
 @login_required
 def lesson_details(request, course_slug, lesson_position):
-    # TODO: REFACTOR VIEW, API, TEMPLATE, JS
     service = LessonService()
     course = service.get_course_by_slug(course_slug)
     lesson = service.get_lesson(course, lesson_position)
@@ -17,7 +16,10 @@ def lesson_details(request, course_slug, lesson_position):
 
     if prev_lesson:
         prev_lesson_object = service.get_lesson(course, prev_lesson)
-        user_completed_prev_lesson = service.is_user_lesson_complete(prev_lesson_object, user.id)
+        user_completed_prev_lesson = service.is_user_lesson_complete(
+            prev_lesson_object,
+            user.id
+        )
         if not user_completed_prev_lesson:
             raise PermissionDenied
 
@@ -30,7 +32,9 @@ def lesson_details(request, course_slug, lesson_position):
     user_answers_dict = service.get_user_answers_for_tasks(tasks, user.id)
 
     count_tasks = len(tasks)
-    count_completed_tasks = sum(1 for task in tasks if user_answers_dict.get(task.id))
+    count_completed_tasks = sum(
+        1 for task in tasks if user_answers_dict.get(task.id)
+    )
     is_all_tasks_completed = count_tasks == count_completed_tasks
 
     context = {

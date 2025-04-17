@@ -24,16 +24,25 @@ document.addEventListener("DOMContentLoaded", function() {
                     showToast(data.message);
                 } else {
                     let message = "";
+
                     if (typeof data.errors === 'string') {
-                        message = data.errors;
-                    } else {
+                        message = data.errors; // Если это уже строка ошибки — просто юзаем
+                    } else if (typeof data.errors === 'object') {
                         for (let key in data.errors) {
-                            if (data.errors[key][0]?.message) {
-                                message += data.errors[key][0].message + "\n";
+                            if (Array.isArray(data.errors[key])) {
+                                data.errors[key].forEach(errorObj => {
+                                    if (errorObj.message) {
+                                        message += `Ошибка: ${errorObj.message}\n`;
+                                    }
+                                });
                             }
                         }
+                    } else {
+                        message = "Что-то пошло не так. Ошибки — как призраки, есть, но не видны.";
                     }
+
                     showToast(message.trim(), 5000);
+
                 }
             })
             .catch((error) => {
