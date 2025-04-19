@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from courses.models import Course, Enrollment
+from courses.models import Course, Enrollment, CourseTag
+
+
+@admin.register(CourseTag)
+class CourseTagAdmin(admin.ModelAdmin):
+    list_display = ('id', 'tag')
 
 
 @admin.register(Course)

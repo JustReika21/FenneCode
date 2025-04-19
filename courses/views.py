@@ -15,7 +15,13 @@ def get_completed_lessons(user, course):
 
 
 def courses(request):
-    all_courses = Course.objects.all().order_by('created_at')
+    tag = request.GET.get('tag')
+    if tag:
+        all_courses = Course.objects.filter(
+            tags__tag__iexact=tag
+        ).order_by('created_at')
+    else:
+        all_courses = Course.objects.all().order_by('created_at')
     context = {
         'courses': all_courses
     }
@@ -24,7 +30,10 @@ def courses(request):
 
 def course_info(request, course_slug):
     try:
-        course = Course.objects.prefetch_related('lessons', 'reviews').get(slug=course_slug)
+        course = Course.objects.prefetch_related(
+            'lessons',
+            'reviews'
+        ).get(slug=course_slug)
     except Course.DoesNotExist:
         raise Http404
     lessons = course.lessons.all().order_by('position')

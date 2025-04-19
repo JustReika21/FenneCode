@@ -41,7 +41,10 @@ class UserChoiceAnswer(models.Model):
         related_name='user_choice_answers',
         on_delete=models.CASCADE
     )
-    selected_answers = models.ManyToManyField(Answer)
+    selected_answers = models.ManyToManyField(
+        Answer,
+        related_name='user_choice_answers'
+    )
     points = models.SmallIntegerField(default=0)
 
     def __str__(self):

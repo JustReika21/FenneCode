@@ -11,8 +11,8 @@
                 <span>Курсы &bigtriangledown;</span>
                 <ul>
                     <li><a href="{% url 'courses:courses' %}">Все курсы</a></li>
-                    <li><a href="#">Программирование</a></li>
-                    <li><a href="#">Базы данных</a></li>
+                    <li><a href="{% url 'courses:courses' %}?tag=Python">Python</a></li>
+                    <li><a href="{% url 'courses:courses' %}?tag=SQL">SQL</a></li>
                 </ul>
             </li>
 

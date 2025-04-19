@@ -3,6 +3,13 @@ from django.db import models
 from fennecode import settings
 
 
+class CourseTag(models.Model):
+    tag = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.tag
+
+
 class Course(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -17,9 +24,13 @@ class Course(models.Model):
     )
     slug = models.SlugField(unique=True)
     cover = models.ImageField(
-        upload_to="courses_covers/",
+        upload_to='courses_covers/',
         default='courses_covers/default.jpg'
     )
+    tags = models.ManyToManyField(
+        CourseTag,
+        related_name='courses',
+        blank=True)
     total_points = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
