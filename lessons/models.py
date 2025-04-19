@@ -17,7 +17,6 @@ class Lesson(models.Model):
     user_lesson_complete = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='user_lesson_complete',
-        null=True,
         blank=True
     )
 

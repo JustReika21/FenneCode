@@ -11,6 +11,7 @@ def profile(request, user_id):
     ).only(
         'course__title',
         'course__slug',
+        'course__total_points',
         'course__cover'
     ).filter(user_id=user_id)
 

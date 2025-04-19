@@ -11,7 +11,12 @@
                 <div class="course-info">
                     <h2>{{ course.title }}</h2>
                     <p>{{ course.description }}</p>
-                    <span class="author" style="display: flex; justify-content: space-between">Автор: {{ course.author.username }} <span>🕒 {{ course.duration }} мес.</span></span>
+                    <div class="meta">
+                        <span style="display: flex; justify-content: space-between">Автор: {{ course.author.username }}
+                            <span>🕒 {{ course.duration }} мес.</span>
+                        </span>
+                        <span>Колчиество очков за курс: {{ course.total_points }}</span>
+                    </div>
                 </div>
             </a>
         {% endfor %}

@@ -15,7 +15,7 @@ def get_completed_lessons(user, course):
 
 
 def courses(request):
-    all_courses = Course.objects.all()
+    all_courses = Course.objects.all().order_by('created_at')
     context = {
         'courses': all_courses
     }

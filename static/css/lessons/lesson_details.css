@@ -21,6 +21,16 @@
     text-justify: inter-word;
 }
 
+.lesson-content a {
+    color: #f39c12;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.lesson-content a:hover {
+    color: #d57f01;
+}
+
 .lesson-meta {
     font-size: 14px;
     color: #bbb;

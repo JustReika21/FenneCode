@@ -8,15 +8,17 @@
 
     <div class="lesson-container">
         <h1 class="lesson-title">{{ lesson.title }}</h1>
-        <div class="lesson-content">{{ lesson.content }}</div>
         <p class="lesson-meta">Урок: {{ lesson.position }}</p>
+        <div class="lesson-content">{{ lesson.content|safe }}</div>
 
         <h2>Задания</h2>
         {% for task in tasks %}
             {% with user_answers=user_answers_dict|get_item:task.id %}
                 <div class="lesson-task">
                     <p>{{ task.question }}</p>
-
+                    <div class="lesson-meta">
+                        Задание оценивается в {{ task.points }} очков
+                    </div>
                     {% if user_answers %}
                         {% for choice in choices|get_item:task.id %}
                             <label class="lesson-task-answer

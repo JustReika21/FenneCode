@@ -41,6 +41,9 @@
                             <a href="{% url 'courses:course_info' course.course.slug %}">
                                 <h4>{{ course.course.title }}</h4>
                             </a>
+                            <div class="course-points">
+                                Заработанные очки: {{ course.points }}/{{ course.course.total_points }}
+                            </div>
                             <div class="progress-bar">
                                 <div class="progress" style="width: {{ course.progress }}%;"></div>
                                 <div class="progress-text">{{ course.progress }}%</div>

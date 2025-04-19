@@ -143,8 +143,15 @@
 }
 
 .course-info h4 {
-    margin: 0 0 10px;
+    margin: 0 0 5px;
     color: #ffa726;
+}
+
+.course-points {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: inline-block;
 }
 
 .progress-bar {
@@ -152,8 +159,8 @@
     border-radius: 5px;
     overflow: hidden;
     height: 20px;
-    width: 100%; /* гарантирует полную ширину */
-    position: relative; /* для абсолютного позиционирования текста */
+    width: 100%;
+    position: relative;
 }
 
 .progress {

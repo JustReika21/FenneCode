@@ -15,7 +15,7 @@ def user_has_access_to_task(user, task):
             position=cur_lesson.position - 1,
             course=course
         )
-        if not prev_lesson.user_lesson_complete.filter(id=user).exists():
+        if not prev_lesson.user_lesson_complete.filter(id=user.id).exists():
             return False
     else:
         if not is_user_enrolled(user, course):
