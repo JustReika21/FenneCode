@@ -138,3 +138,30 @@
     color: #00990099;
     transition: color 0.5s;
 }
+
+
+.CodeMirror {
+    max-width: 600px;
+    max-height: 250px;
+    border: none;
+    border-radius: 10px;
+}
+
+.console-buttons button {
+    background-color: #f39c12;
+    color: #eee;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.console-buttons button:hover {
+    background-color: #d57f01;
+}
+
+.hidden {
+    display: none;
+}

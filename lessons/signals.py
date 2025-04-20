@@ -17,6 +17,6 @@ def update_course_lesson_count_on_save(sender, instance, created, **kwargs):
 
 
 @receiver(post_delete, sender=Lesson)
-def update_course_lesson_count_on_delete(sender, instance, created, **kwargs):
+def update_course_lesson_count_on_delete(sender, instance, **kwargs):
     if instance.course:
         calculate_course_total_points(instance)

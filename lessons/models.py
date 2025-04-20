@@ -11,7 +11,6 @@ class Lesson(models.Model):
         related_name='lessons'
     )
     title = models.CharField(max_length=100)
-    content = models.TextField()
     position = models.PositiveSmallIntegerField(default=1)
     total_points = models.PositiveSmallIntegerField(default=0)
     user_lesson_complete = models.ManyToManyField(
@@ -30,3 +29,21 @@ class Lesson(models.Model):
                 name='unique_lesson_position'
             )
         ]
+
+
+class LessonContent(models.Model):
+    CONTENT_TYPE = {
+        'Text': 'Text',
+        'Code': 'Code'
+    }
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        related_name='content'
+    )
+    type = models.CharField(max_length=20, choices=CONTENT_TYPE)
+    position = models.PositiveSmallIntegerField(default=1)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.lesson.title
