@@ -4,12 +4,28 @@
 
 {% block content %}
     <link rel="stylesheet" href="{% static 'css/lessons/lesson_details.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/lib/codemirror.css">
     <title>{{ lesson.title }}</title>
 
     <div class="lesson-container">
         <h1 class="lesson-title">{{ lesson.title }}</h1>
         <p class="lesson-meta">Урок: {{ lesson.position }}</p>
         <div class="lesson-content">{{ lesson.content|safe }}</div>
+
+        <h2>Интерактивная консоль</h2>
+        <form id="code-form" method="post" action="{% url 'api:run_code' %}">
+            {% csrf_token %}
+            <div class="editor-container" style="margin-bottom: 10px;">
+                <textarea id="code" name="code">print('Hello, World!')</textarea>
+            </div>
+        
+            <div class="buttons" style="margin-bottom: 10px;">
+                <button type="button" onclick="runCode(event)">Запустить</button>
+                <button type="button" onclick="copyCode()">Скопировать</button>
+            </div>
+        
+            <div id="output" style="background: #1f1f1f; color: #0f0; padding: 10px; font-family: monospace; min-height: 50px; white-space: pre-wrap;"></div>
+        </form>
 
         <h2>Задания</h2>
         {% for task in tasks %}
@@ -68,7 +84,9 @@
             {% endif %}
         </div>
     </div>
-
+    <script type="module" src="{% static 'js/lessons/code_runner.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/lib/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.13/mode/python/python.js"></script>
     <script type="module" src="{% static 'js/lessons/task_handler.js' %}"></script>
     <script type="module" src="{% static 'js/lessons/lesson_completion.js' %}"></script>
 {% endblock %}

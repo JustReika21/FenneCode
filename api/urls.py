@@ -18,6 +18,11 @@ urlpatterns = [
         name='submit_choice_task_answers'
     ),
     path(
+        'run_code/',
+        views.run_code,
+        name='run_code'
+    ),
+    path(
         'check_lesson_completion/<int:lesson_id>',
         views.check_lesson_completion,
         name='check_lesson_completion'

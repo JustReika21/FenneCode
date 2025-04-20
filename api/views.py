@@ -2,12 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET, require_POST
+import subprocess
+
 
 from accounts.models import Account
 from api.services import (
     user_has_access_to_task,
     evaluate_answers,
-    is_user_enrolled
+    is_user_enrolled, validate_ast, UnsafeCodeError, limit_resources
 )
 from courses.models import Course, Enrollment
 from lessons.models import Lesson
@@ -48,12 +50,6 @@ def enroll_course(request):
 @require_POST
 @login_required
 def submit_choice_task_answers(request):
-    if request.method != 'POST':
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Неверный запрос'
-        }, status=405)
-
     try:
         answer_ids = list(map(int, request.POST.getlist('selected_answers')))
         task_id = int(request.POST.get('choice_task'))
@@ -110,6 +106,51 @@ def submit_choice_task_answers(request):
         'message': 'Ответы сохранены',
         **result_answers
     }, status=200)
+
+
+@require_POST
+@login_required
+def run_code(request):
+    try:
+        code = request.POST.get('code')
+        validate_ast(code)
+
+        result = subprocess.run(
+            ['python3', '-c', code],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            preexec_fn=limit_resources,
+            env={'PYTHONSAFEPATH': '/tmp'},
+            cwd='/tmp',
+        )
+
+        if result.returncode != 0:
+            return JsonResponse({
+                "status": "error",
+                "console_output": result.stderr or 'Execution aborted'
+            }, status=400)
+
+        return JsonResponse({
+            "status": "success",
+            "console_output": result.stdout
+        }, status=200)
+
+    except UnsafeCodeError as e:
+        return JsonResponse({
+            "status": "error",
+            "console_output": str(e)
+        }, status=403)
+    except subprocess.TimeoutExpired:
+        return JsonResponse({
+            "status": "error",
+            "console_output": "Execution timed out"
+        }, status=408)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "console_output": str(e)
+        }, status=400)
 
 
 @require_GET

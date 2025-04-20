@@ -13,7 +13,6 @@ export function checkLessonCompletion(lessonId, csrfToken) {
                 })
                 .then(markResponse => {
                     if (!markResponse.ok) {
-                        console.warn("Could not mark lesson as complete");
                         return;
                     }
 
