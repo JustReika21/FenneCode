@@ -3,8 +3,9 @@ from collections import defaultdict
 from django.shortcuts import get_object_or_404
 
 from courses.models import Course
-from lessons.models import Lesson
+from lessons.models import Lesson, LessonContent
 from tasks.models import ChoiceTask, UserChoiceAnswer
+from django.db.models import Prefetch
 
 
 def get_course_by_slug(slug):
@@ -16,11 +17,17 @@ def get_lesson(course, lesson_position):
 
 
 def get_lesson_with_content(course, lesson_position):
-    return get_object_or_404(
-        Lesson.objects.prefetch_related('content').order_by('position'),
-        course=course,
-        position=lesson_position
-    )
+    lesson = get_object_or_404(Lesson, course=course, position=lesson_position)
+
+    content_qs = LessonContent.objects.filter(
+        lesson=lesson
+    ).order_by('position')
+
+    lesson = Lesson.objects.prefetch_related(
+        Prefetch('content', queryset=content_qs)
+    ).get(id=lesson.id)
+
+    return lesson
 
 
 def lesson_exists(course, lesson_position):

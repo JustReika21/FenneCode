@@ -1,20 +1,37 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_GET, require_POST
 import subprocess
 
 
 from accounts.models import Account
-from api.services import (
-    user_has_access_to_task,
-    evaluate_answers,
-    is_user_enrolled, validate_ast, UnsafeCodeError, limit_resources
+from api.services.code_runner_services import (
+    validate_ast,
+    limit_resources
 )
+from api.services.course_services import (
+    get_course,
+    get_course_related_lessons,
+    get_enrollment,
+    is_user_enrolled,
+    user_has_access_to_task
+)
+from api.services.lesson_services import (
+    get_lesson_with_tasks,
+    get_lesson_with_course,
+    get_count_completed_lessons,
+)
+from api.services.profile_services import get_user_profile
+from api.services.task_services import (
+    get_task_with_course,
+    get_task_answers,
+    get_filtered_user_answers,
+    get_count_tasks_in_lesson,
+    evaluate_answers
+)
+
 from courses.models import Course, Enrollment
-from lessons.models import Lesson
-from tasks.models import Answer, ChoiceTask, UserChoiceAnswer
-from user_profile.models import Profile
+from tasks.models import UserChoiceAnswer
 
 from user_profile.forms import ProfileEditForm
 from reviews.forms import ReviewForm
@@ -27,14 +44,14 @@ def enroll_course(request):
     user = request.user
 
     try:
-        course = Course.objects.get(id=course_id)
+        course = get_course(course_id)
     except (Course.DoesNotExist, Account.DoesNotExist):
         return JsonResponse({
             'status': 'error',
             'message': 'Неверные данные'
         }, status=400)
 
-    if is_user_enrolled(user, course):
+    if is_user_enrolled(user.id, course.id):
         return JsonResponse({
             'status': 'error',
             'message': 'Вы уже записаны на курс'
@@ -51,7 +68,7 @@ def enroll_course(request):
 @login_required
 def submit_choice_task_answers(request):
     try:
-        answer_ids = list(map(int, request.POST.getlist('selected_answers')))
+        answer_ids = tuple(map(int, request.POST.getlist('selected_answers')))
         task_id = int(request.POST.get('choice_task'))
     except (TypeError, ValueError):
         return JsonResponse({
@@ -66,7 +83,7 @@ def submit_choice_task_answers(request):
         }, status=400)
 
     user = request.user
-    task = get_object_or_404(ChoiceTask.objects.select_related("lesson__course"), id=task_id)
+    task = get_task_with_course(task_id)
 
     if not user_has_access_to_task(user, task):
         return JsonResponse({
@@ -74,8 +91,8 @@ def submit_choice_task_answers(request):
             'message': 'У вас нет доступа к этому заданию'
         }, status=403)
 
-    answers = Answer.objects.filter(choice_task=task)
-    user_answers = answers.filter(id__in=answer_ids)
+    answers = get_task_answers(task_id)
+    user_answers = get_filtered_user_answers(answers, answer_ids)
 
     if not user_answers.exists():
         return JsonResponse({
@@ -89,12 +106,15 @@ def submit_choice_task_answers(request):
     points = 0
     if is_correct:
         points = task.points
-        enrollment = Enrollment.objects.get(
-            user=user,
-            course=task.lesson.course
-        )
-        enrollment.points += points
-        enrollment.save()
+        try:
+            enrollment = get_enrollment(user.id, task.lesson.course.id)
+            enrollment.points += points
+            enrollment.save()
+        except Enrollment.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Вы должны быть записаны на курс'
+            }, status=403)
 
     user_answer = UserChoiceAnswer.objects.create(
         user=user, choice_task=task, points=points
@@ -124,7 +144,6 @@ def run_code(request):
             env={'PYTHONSAFEPATH': '/tmp'},
             cwd='/tmp',
         )
-
         if result.returncode != 0:
             return JsonResponse({
                 "status": "error",
@@ -133,7 +152,7 @@ def run_code(request):
 
         return JsonResponse({
             "status": "success",
-            "console_output": result.stdout
+            "console_output": result.stderr or result.stdout or 'Execution failed'
         }, status=200)
 
     except UnsafeCodeError as e:
@@ -156,23 +175,14 @@ def run_code(request):
 @require_GET
 @login_required
 def check_lesson_completion(request, lesson_id):
-    try:
-        lesson = Lesson.objects.prefetch_related(
-            'choice_tasks'
-        ).get(id=lesson_id)
-    except Lesson.DoesNotExist:
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Такого урока не существует'
-        })
+
     user = request.user
+    lesson = get_lesson_with_tasks(lesson_id)
 
     count_tasks = lesson.choice_tasks.count()
-    count_completed_tasks = UserChoiceAnswer.objects.filter(
-        choice_task__lesson=lesson,
-        user=user
-    ).count()
+    count_completed_tasks = get_count_tasks_in_lesson(user.id, lesson_id)
     is_all_tasks_completed = count_completed_tasks == count_tasks
+
     return JsonResponse({
         'status': 'success',
         'is_all_tasks_completed': is_all_tasks_completed,
@@ -182,33 +192,26 @@ def check_lesson_completion(request, lesson_id):
 @require_POST
 @login_required
 def mark_lesson_complete(request, lesson_id):
-    lesson = get_object_or_404(
-        Lesson.objects
-        .select_related('course')
-        .prefetch_related('course__lessons'),
-        id=lesson_id
-    )
+    lesson = get_lesson_with_course(lesson_id)
     user = request.user
 
     try:
-        enrollment = Enrollment.objects.get(user=user, course=lesson.course)
+        enrollment = get_enrollment(user.id, lesson.course.id)
     except Enrollment.DoesNotExist:
         return JsonResponse({
             'status': 'error',
             'message': 'Вы должны быть записаны на курс'
         }, status=403)
 
-    if lesson.user_lesson_complete.filter(id=user.id).exists():
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Вы уже завершили этот урок'
-        }, status=403)
     lesson.user_lesson_complete.add(user)
 
-    total_lessons = lesson.course.lessons.count()
-    total_completed_lessons = lesson.course.lessons.filter(
-        user_lesson_complete=user
-    ).count()
+    course_with_lessons = get_course_related_lessons(lesson.course.id)
+
+    total_lessons = course_with_lessons.lessons.count()
+    total_completed_lessons = get_count_completed_lessons(
+        user.id,
+        course_with_lessons
+    )
     user_progress = total_completed_lessons / total_lessons * 100
     enrollment.progress = round(user_progress, 2)
     enrollment.save(update_fields=["progress"])
@@ -222,6 +225,7 @@ def mark_lesson_complete(request, lesson_id):
 @require_POST
 @login_required
 def submit_course_review(request):
+    course_id = request.POST.get('course')
     if request.method != "POST":
         return JsonResponse({
             'status': 'error',
@@ -237,14 +241,14 @@ def submit_course_review(request):
         }, status=400)
 
     try:
-        course = Course.objects.get(id=request.POST.get('course'))
+        course = get_course(course_id)
     except Course.DoesNotExist:
         return JsonResponse({
             'status': 'error',
             'errors': 'Курс не существует'
         }, status=400)
 
-    if not Enrollment.objects.filter(user=user, course=course).exists():
+    if not is_user_enrolled(user.id, course.id):
         return JsonResponse({
             'status': 'error',
             'errors': 'Вы не записаны на курс'
@@ -272,7 +276,7 @@ def edit_profile(request):
         }, status=405)
 
     user = request.user
-    user_profile = get_object_or_404(Profile, user=user)
+    user_profile = get_user_profile(user.id)
 
     form = ProfileEditForm(request.POST, request.FILES, instance=user_profile)
     if not form.is_valid():

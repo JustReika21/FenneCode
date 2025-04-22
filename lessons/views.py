@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 
-from lessons.services import (
+from lessons.services.lesson_services import (
     get_lesson,
     get_course_by_slug,
     get_all_lesson_tasks,

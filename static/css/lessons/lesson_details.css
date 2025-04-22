@@ -1,5 +1,5 @@
 .lesson-container {
-    max-width: 75%;
+    max-width: 60%;
     margin: 10px auto;
     padding: 20px;
     background: #1e1e1e;
@@ -139,12 +139,23 @@
     transition: color 0.5s;
 }
 
+.code-form {
+    margin-left: 25%;
+    margin-right: 25%;
+}
 
 .CodeMirror {
     max-width: 600px;
     max-height: 250px;
     border: none;
     border-radius: 10px;
+}
+
+.console-buttons {
+    width: 100%;
+    max-width: 600px;
+    margin: 10px auto 0 auto;
+    text-align: center;
 }
 
 .console-buttons button {
@@ -164,4 +175,15 @@
 
 .hidden {
     display: none;
+}
+
+@media (max-width: 768px) {
+    .code-form {
+    margin-left: 0;
+    margin-right: 0;
+    }
+
+    .lesson-container {
+        max-width: 75%;
+    }
 }

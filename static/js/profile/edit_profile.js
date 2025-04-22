@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    showToast("Данные обновлены успешно", 3000)
+                    window.location.href = userProfileUrl;
                 } else {
                     const errors = data.errors || {};
                     const messages = [];

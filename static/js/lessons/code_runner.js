@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 output.textContent = data.console_output || "Нет вывода.";
             })
             .catch(err => {
+                output.classList.remove("hidden");
                 output.textContent = "Ошибка: " + (
                     err.console_output || JSON.stringify(err)
                 );

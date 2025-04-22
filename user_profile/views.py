@@ -1,19 +1,14 @@
 from django.shortcuts import render
 
-from accounts.models import Account
-from courses.models import Enrollment
+from user_profile.services.user_profile_services import (
+    get_user_courses,
+    get_user_profile
+)
 
 
 def profile(request, user_id):
-    user_profile = Account.objects.select_related('profile').get(id=user_id)
-    user_courses = Enrollment.objects.select_related(
-        'course'
-    ).only(
-        'course__title',
-        'course__slug',
-        'course__total_points',
-        'course__cover'
-    ).filter(user_id=user_id)
+    user_profile = get_user_profile(user_id)
+    user_courses = get_user_courses(user_id)
 
     context = {
         'user_profile': user_profile,

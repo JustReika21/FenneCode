@@ -10,4 +10,4 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(LessonContent)
 class LessonContentAdmin(admin.ModelAdmin):
-    list_display = ('type', 'content')
+    list_display = ('lesson', 'type', 'content')

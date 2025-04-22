@@ -1,27 +1,21 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from courses.models import Course, Enrollment
-
-
-def get_completed_lessons(user, course):
-    completed_lessons = set()
-    if user.is_authenticated:
-        completed_lessons = set(
-            user.user_lesson_complete.filter(
-                course=course
-            ).values_list('position', flat=True))
-    return completed_lessons
+from courses.services.courses_services import (
+    get_completed_lessons,
+    get_courses_with_tag,
+    get_courses, get_course_with_lessons_and_reviews, get_course_lessons,
+    get_course_reviews, is_user_enrolled
+)
+from courses.models import Course
 
 
 def courses(request):
     tag = request.GET.get('tag')
     if tag:
-        all_courses = Course.objects.filter(
-            tags__tag__iexact=tag
-        ).order_by('created_at')
+        all_courses = get_courses_with_tag(tag)
     else:
-        all_courses = Course.objects.all().order_by('created_at')
+        all_courses = get_courses()
     context = {
         'courses': all_courses
     }
@@ -30,22 +24,16 @@ def courses(request):
 
 def course_info(request, course_slug):
     try:
-        course = Course.objects.prefetch_related(
-            'lessons',
-            'reviews'
-        ).get(slug=course_slug)
+        course = get_course_with_lessons_and_reviews(course_slug)
     except Course.DoesNotExist:
         raise Http404
-    lessons = course.lessons.all().order_by('position')
-    reviews = course.reviews.all().order_by('-created_at')
+    lessons = get_course_lessons(course)
+    reviews = get_course_reviews(course)
     user = request.user
     completed_lessons = get_completed_lessons(user, course)
-    is_user_enrolled = False
+    is_enrolled = False
     if user.is_authenticated:
-        is_user_enrolled = Enrollment.objects.filter(
-            user=user,
-            course=course
-        ).exists()
+        is_enrolled = is_user_enrolled(user.id, course.id)
 
     rating_choices = [i for i in range(1, 11)]
 
@@ -54,7 +42,7 @@ def course_info(request, course_slug):
         'lessons': lessons,
         'reviews': reviews,
         'completed_lessons': completed_lessons,
-        'is_user_enrolled': is_user_enrolled,
+        'is_user_enrolled': is_enrolled,
         'rating_choices': rating_choices
     }
     return render(request, 'courses/course_info.html', context)

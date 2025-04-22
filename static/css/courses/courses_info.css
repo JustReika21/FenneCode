@@ -1,5 +1,5 @@
 .course-container {
-    max-width: 75%;
+    max-width: 60%;
     margin: 10px auto;
     padding: 20px;
     background: #1e1e1e;
@@ -199,4 +199,11 @@ textarea {
 
 .no-reviews {
     margin-top: 10px;
+}
+
+
+@media (max-width: 768px) {
+    .course-container {
+        max-width: 75%;
+    }
 }
