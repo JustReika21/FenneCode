@@ -1,0 +1,104 @@
+.profile-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #eeeeee;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-header {
+    font-size: 34px;
+    color: #ffa726;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.edit-profile-form {
+    background-color: #1e1e1e;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ffa726;
+}
+
+.edit-profile-form input[type="text"],
+.edit-profile-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background-color: #2c2c2c;
+    color: #eeeeee;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.edit-profile-form input[type="text"]:focus,
+.edit-profile-form textarea:focus {
+    border-color: #ff9800;
+    outline: none;
+}
+
+.file-upload-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.file-upload-input {
+    display: none;
+}
+
+.custom-file-button {
+    background-color: #f39c12;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: fit-content;
+}
+
+.custom-file-button:hover {
+    background-color: #d57f01;
+}
+
+#file-chosen {
+    font-size: 14px;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+.submit-button {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #f39c12;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background: #d57f01;
+}
