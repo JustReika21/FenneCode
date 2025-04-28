@@ -1,11 +1,13 @@
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import Http404
 from django.shortcuts import render
 
 from courses.services.courses_services import (
     get_completed_lessons,
     get_courses_with_tag,
-    get_courses, get_course_with_lessons_and_reviews, get_course_lessons,
-    get_course_reviews, is_user_enrolled
+    get_courses,
+    get_course_with_lessons_and_reviews,
+    is_user_enrolled
 )
 from courses.models import Course
 
@@ -27,8 +29,17 @@ def course_info(request, course_slug):
         course = get_course_with_lessons_and_reviews(course_slug)
     except Course.DoesNotExist:
         raise Http404
-    lessons = get_course_lessons(course)
-    reviews = get_course_reviews(course)
+
+    lessons = course.ordered_lessons
+    paginator = Paginator(course.ordered_reviews, 5)
+    page_number = request.GET.get('page')
+    try:
+        reviews_on_page = paginator.page(page_number)
+    except PageNotAnInteger:
+        reviews_on_page = paginator.page(1)
+    except EmptyPage:
+        reviews_on_page = paginator.page(paginator.num_pages)
+
     user = request.user
     completed_lessons = get_completed_lessons(user, course)
     is_enrolled = False
@@ -40,7 +51,7 @@ def course_info(request, course_slug):
     context = {
         'course': course,
         'lessons': lessons,
-        'reviews': reviews,
+        'reviews_on_page': reviews_on_page,
         'completed_lessons': completed_lessons,
         'is_user_enrolled': is_enrolled,
         'rating_choices': rating_choices

@@ -38,6 +38,11 @@ urlpatterns = [
         name='submit_course_review'
     ),
     path(
+        'delete_course_review/<int:review_id>',
+        views.delete_course_review,
+        name='delete_course_review'
+    ),
+    path(
         'edit_profile/',
         views.edit_profile,
         name='edit_profile'

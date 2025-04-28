@@ -1,4 +1,8 @@
+from django.db.models import Prefetch
+
 from courses.models import Course, Enrollment
+from lessons.models import Lesson
+from reviews.models import Review
 
 
 def get_completed_lessons(user, course):
@@ -21,17 +25,17 @@ def get_courses_with_tag(tag):
 
 def get_course_with_lessons_and_reviews(course_slug):
     return Course.objects.prefetch_related(
-        'lessons',
-        'reviews'
+        Prefetch(
+            'lessons',
+            queryset=Lesson.objects.order_by('position'),
+            to_attr='ordered_lessons'
+        ),
+        Prefetch(
+            'reviews',
+            queryset=Review.objects.order_by('-created_at'),
+            to_attr='ordered_reviews'
+        )
     ).get(slug=course_slug)
-
-
-def get_course_lessons(course):
-    return course.lessons.all().order_by('position')
-
-
-def get_course_reviews(course):
-    return course.reviews.all().order_by('created_at')
 
 
 def is_user_enrolled(user_id, course_id):

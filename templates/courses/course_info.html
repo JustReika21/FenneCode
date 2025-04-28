@@ -87,11 +87,13 @@
                     <button type="submit" class="submit-button">Отправить</button>
                 </div>
             </form>
+        {% else %}
+            <h2>Запишитесь на курс чтобы оставить отзыв</h2>
         {% endif %}
 
-        <h2>Отзывы</h2>
+        <h2 id="reviews">Отзывы</h2>
         <div class="reviews">
-            {% for review in reviews %}
+            {% for review in reviews_on_page %}
                 <div class="review">
                     <div class="review-header">
                         <span class="review-user">{{ review.user.username }}</span>
@@ -99,12 +101,32 @@
                     </div>
                     <p class="review-text">{{ review.text }}</p>
                     <p class="review-rating">⭐ {{ review.rating }}/10</p>
+                    {% if review.user == request.user %}
+                        <form method="post" action="{% url 'api:delete_course_review' review.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button">Удалить отзыв</button>
+                        </form>
+                    {% endif %}
                 </div>
             {% empty %}
                 <p class="no-reviews">Пока отзывов нет. Будьте первым!</p>
             {% endfor %}
         </div>
+    
+        <div class="pagination">
+            {% if reviews_on_page.has_previous %}
+                <a href="?page={{ reviews_on_page.previous_page_number }}#reviews">« Назад</a>
+            {% endif %}
+        
+            <span>Страница {{ reviews_on_page.number }} из {{ reviews_on_page.paginator.num_pages }}</span>
+        
+            {% if reviews_on_page.has_next %}
+                <a href="?page={{ reviews_on_page.next_page_number }}#reviews">Вперёд »</a>
+            {% endif %}
+        </div>
+    
     </div>
     <script src="{% static 'js/courses/enrollment_handler.js' %}"></script>
     <script src="{% static 'js/courses/review_submit.js' %}"></script>
+    <script src="{% static 'js/courses/review_delete.js' %}"></script>
 {% endblock %}

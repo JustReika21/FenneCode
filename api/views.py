@@ -7,7 +7,7 @@ import subprocess
 from accounts.models import Account
 from api.services.code_runner_services import (
     validate_ast,
-    limit_resources
+    limit_resources, UnsafeCodeError
 )
 from api.services.course_services import (
     get_course,
@@ -31,6 +31,7 @@ from api.services.task_services import (
 )
 
 from courses.models import Course, Enrollment
+from reviews.models import Review
 from tasks.models import UserChoiceAnswer
 
 from user_profile.forms import ProfileEditForm
@@ -226,11 +227,6 @@ def mark_lesson_complete(request, lesson_id):
 @login_required
 def submit_course_review(request):
     course_id = request.POST.get('course')
-    if request.method != "POST":
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Неверный запрос'
-        }, status=405)
 
     form = ReviewForm(request.POST)
     user = request.user
@@ -246,13 +242,13 @@ def submit_course_review(request):
         return JsonResponse({
             'status': 'error',
             'errors': 'Курс не существует'
-        }, status=400)
+        }, status=404)
 
     if not is_user_enrolled(user.id, course.id):
         return JsonResponse({
             'status': 'error',
             'errors': 'Вы не записаны на курс'
-        }, status=400)
+        }, status=403)
 
     review = form.save()
     return JsonResponse({
@@ -261,19 +257,36 @@ def submit_course_review(request):
         'review': {
             'text': review.text,
             'rating': review.rating,
-            'username': user.username
-        }
+            'username': user.username,
+            'review_id': review.id,
+        },
     }, status=200)
 
 
 @require_POST
 @login_required
-def edit_profile(request):
-    if request.method != "POST":
+def delete_course_review(request, review_id):
+    user = request.user
+    review = Review.objects.filter(
+        user_id=user.id,
+        id=review_id
+    ).first()
+    if review:
+        review.delete()
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Вы удалили отзыв'
+        }, status=200)
+    else:
         return JsonResponse({
             'status': 'error',
-            'message': 'Неверный запрос'
-        }, status=405)
+            'message': 'Отзыва не существует'
+        }, status=404)
+
+
+@require_POST
+@login_required
+def edit_profile(request):
 
     user = request.user
     user_profile = get_user_profile(user.id)

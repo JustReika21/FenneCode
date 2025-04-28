@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".submit-button").forEach((button) =>
+    document.querySelectorAll(".delete-button").forEach((button) =>
         button.addEventListener("click", function(event) {
             event.preventDefault();
 
@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    showReviewOnPage(data);
+                    removeReviewFromPage(form);
                     showToast(data.message);
                 } else {
                     let message = "";
 
                     if (typeof data.errors === 'string') {
-                        message = data.errors; // Если это уже строка ошибки — просто юзаем
+                        message = data.errors;
                     } else if (typeof data.errors === 'object') {
                         for (let key in data.errors) {
                             if (Array.isArray(data.errors[key])) {
@@ -42,56 +42,26 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
 
                     showToast(message.trim(), 5000);
-
                 }
             })
             .catch((error) => {
                 console.error("Ошибка", error);
-                showToast("Произошла ошибка: " + error.message);
+                showToast("Произошла ошибка: " + error.message, 5000);
             });
         })
     );
 });
 
-function showReviewOnPage(data) {
-    if (data.status !== "success" || !data.review) return;
-
+function removeReviewFromPage(form) {
+    const reviewDiv = form.closest('.review');
     const reviewsContainer = document.querySelector('.reviews');
-    if (!reviewsContainer) return;
 
-    const reviewDiv = document.createElement('div');
-    reviewDiv.classList.add('review');
+    if (reviewDiv) reviewDiv.remove();
 
-    const reviewHeader = document.createElement('div');
-    reviewHeader.classList.add('review-header');
-
-    const userSpan = document.createElement('span');
-    userSpan.classList.add('review-user');
-    userSpan.textContent = data.review.username;
-
-    const dateSpan = document.createElement('span');
-    dateSpan.classList.add('review-date');
-    dateSpan.textContent = 'Только что';
-
-    reviewHeader.appendChild(userSpan);
-    reviewHeader.appendChild(dateSpan);
-
-    const reviewText = document.createElement('p');
-    reviewText.classList.add('review-text');
-    reviewText.textContent = data.review.text;
-
-    const reviewRating = document.createElement('p');
-    reviewRating.classList.add('review-rating');
-    reviewRating.textContent = `⭐ ${data.review.rating}/10`;
-
-    reviewDiv.appendChild(reviewHeader);
-    reviewDiv.appendChild(reviewText);
-    reviewDiv.appendChild(reviewRating);
-
-    reviewsContainer.insertBefore(reviewDiv, reviewsContainer.firstChild);
-
-    const form = document.querySelector(".review-form");
-    if (form) form.reset();
+    if (reviewsContainer && reviewsContainer.querySelectorAll('.review').length === 0) {
+        const noReviewsMessage = document.createElement('p');
+        noReviewsMessage.className = 'no-reviews';
+        noReviewsMessage.textContent = 'Пока отзывов нет. Будьте первым!';
+        reviewsContainer.appendChild(noReviewsMessage);
+    }
 }
-
-
