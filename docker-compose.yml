@@ -24,8 +24,13 @@ services:
       - .env
     ports:
       - "8000:8000"
-    command: python manage.py runserver 0.0.0.0:8000
-
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+#      gunicorn fennecode.wsgi:application --bind 0.0.0.0:8000
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -37,7 +42,6 @@ services:
       - ./media:/fennecode/media
     depends_on:
       - django-web
-
 
 volumes:
   postgres_data:

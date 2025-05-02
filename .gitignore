@@ -173,3 +173,4 @@ cython_debug/
 .idea/
 *.pyc
 .DS_Store
+staticfiles/

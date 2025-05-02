@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch((error) => {
                 console.error("Ошибка", error);
-                alert("Произошла ошибка: " + error.message);
+                showToast("Произошла ошибка: " + error.message);
             });
         })
     );

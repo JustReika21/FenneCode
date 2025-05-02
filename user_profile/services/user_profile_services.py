@@ -1,9 +1,14 @@
+from django.shortcuts import get_object_or_404
+
 from accounts.models import Account
 from courses.models import Enrollment
 
 
 def get_user_profile(user_id):
-    return Account.objects.select_related('profile').get(id=user_id)
+    return get_object_or_404(
+        Account.objects.select_related('profile'),
+        id=user_id
+    )
 
 
 def get_user_courses(user_id):
