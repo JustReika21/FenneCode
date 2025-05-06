@@ -29,8 +29,8 @@
         {% endif %}
 
         {% if is_user_enrolled %}
+            <h2>Список уроков</h2>
             <div class="lessons">
-                <h2>Список уроков</h2>
                 {% for lesson in lessons %}
                     {% with prev_position=lesson.position|add:"-1" %}
                         {% if lesson.position == 1 or prev_position in completed_lessons %}
@@ -50,8 +50,8 @@
                 {% endfor %}
             </div>
         {% else %}
+            <h2>Список уроков</h2>
             <div class="lessons">
-                <h2>Список уроков</h2>
                 {% for lesson in lessons %}
                     {% if forloop.first %}
                         <a href="{% url 'courses:lessons:lesson_details' course_slug=course.slug lesson_position=lesson.position %}"

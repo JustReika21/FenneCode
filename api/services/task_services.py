@@ -1,5 +1,4 @@
 from tasks.models import ChoiceTask, Answer, UserChoiceAnswer
-from lessons.models import Lesson
 from django.shortcuts import get_object_or_404
 
 
